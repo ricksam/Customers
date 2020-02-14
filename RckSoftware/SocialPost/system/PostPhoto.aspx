@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PostPhoto.aspx.cs" Inherits="RckSoftware.system.PostPhoto" %>

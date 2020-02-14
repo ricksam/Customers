@@ -1,0 +1,52 @@
+<?
+  D.new("Database");
+  D.sql(
+      "SELECT KPA_IDENTIFICACAO, SEC_TO_TIME(TIME_TO_SEC(MAX(KPA_TIMESTAMP))+60*60*-3) AS HORA FROM SZO_KPA_KEEP_ALIVE
+      GROUP BY KPA_IDENTIFICACAO
+      having MAX(KPA_TIMESTAMP) > NOW() LIMIT 1000"
+  );
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial, Verdana; font-size:14pt;}
+    p{font-family:Verdana, Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Arial, Verdana;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{font-weight:bold; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{font-weight:bold;border-top:1px solid #000; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>MAQ ATIVAS</h1>
+  <p>Emissao : <?sys.now()?></p>
+  <table>
+    <tr>
+      <td class='tit'>KPA_IDENTIFICACAO</td>
+      <td class='tit'>HORA</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2:band1?>
+  <?band.dst(D)?>
+    <tr>
+      <td ><?D.KPA_IDENTIFICACAO?></td>
+      <td ><?D.HORA?></td>
+    </tr>
+<?endband1?>
+  </table>
+</div>

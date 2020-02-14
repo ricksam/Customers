@@ -1,0 +1,120 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<div id="main" class="container">
+
+    <button class="btn btn-default start" id="startFull">
+        Abrir o programa em FullScreen</button>
+    <button class="btn btn-default" id="exit" style="display:none">
+        Exit fullscreen</button>
+    <h2>
+        GPS</h2>
+    <button class="btn btn-default" id="askButton">
+        Clique para testar o GPS</button>
+    <div id="gps_target" style="overflow: scroll; height: 90px;">
+    </div>
+    <h2>
+        Camera</h2>
+    <p>
+        <button class="btn btn-lg btn-default" onclick="getStream()">
+            Ligar a câmera</button></p>
+    <p>
+        <video autoplay style="height: 180px; width: 240px;"></video>
+    </p>
+    <p>
+        <button class="btn btn-lg btn-default" onclick="takePhoto()">
+            Tirar Foto!</button></p>
+    <p>
+        <img id="imageTag" width="240" height="180"></p>
+</div>
+
+<p id="logTarget">
+</p>
+@section Scripts{
+    <script type="text/javascript" src="//code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript">
+
+        var target = document.getElementById('gps_target');
+        var watchId;
+
+        function appendLocation(location, verb) {
+            verb = verb || 'updated';
+            var newLocation = document.createElement('p');
+            newLocation.innerHTML = 'Location ' + verb + ': <a href="https://maps.google.com/maps?&z=15&q=' + location.coords.latitude + '+' + location.coords.longitude + '&ll=' + location.coords.latitude + '+' + location.coords.longitude + '" target="_blank">' + location.coords.latitude + ', ' + location.coords.longitude + '</a>';
+            target.appendChild(newLocation);
+        }
+
+        if ('geolocation' in navigator) {
+            document.getElementById('askButton').addEventListener('click', function () {
+                navigator.geolocation.getCurrentPosition(function (location) {
+                    appendLocation(location, 'fetched');
+                });
+                watchId = navigator.geolocation.watchPosition(appendLocation);
+            });
+        } else {
+            target.innerText = 'Geolocation API not supported.';
+        }
+    
+    
+    </script>
+    <script type="text/javascript">
+function getUserMedia(options, successCallback, failureCallback) {
+  var api = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia || navigator.msGetUserMedia;
+  if (api) {
+    return api.bind(navigator)(options, successCallback, failureCallback);
+  }
+}
+
+var theStream;
+
+function getStream() {
+  if (!navigator.getUserMedia && !navigator.webkitGetUserMedia &&
+    !navigator.mozGetUserMedia && !navigator.msGetUserMedia) {
+    alert('User Media API not supported.');
+    return;
+  }
+  
+  var constraints = {
+    video: true
+  };
+
+  getUserMedia(constraints, function (stream) {
+    var mediaControl = document.querySelector('video');
+    if ('srcObject' in mediaControl) {
+      mediaControl.srcObject = stream;
+      mediaControl.src = (window.URL || window.webkitURL).createObjectURL(stream);
+    } else if (navigator.mozGetUserMedia) {
+      mediaControl.mozSrcObject = stream;
+    }
+    theStream = stream;
+  }, function (err) {
+    alert('Error: ' + err);
+  });
+}
+
+function takePhoto() {
+  if (!('ImageCapture' in window)) {
+    alert('ImageCapture is not available');
+    return;
+  }
+  
+  if (!theStream) {
+    alert('Grab the video stream first!');
+    return;
+  }
+  
+  var theImageCapturer = new ImageCapture(theStream.getVideoTracks()[0]);
+
+  theImageCapturer.takePhoto()
+    .then(blob => {
+      var theImageTag = document.getElementById("imageTag");
+      theImageTag.src = URL.createObjectURL(blob);
+    })
+    .catch(err => alert('Error: ' + err));
+}
+    </script>
+    
+    
+}
+

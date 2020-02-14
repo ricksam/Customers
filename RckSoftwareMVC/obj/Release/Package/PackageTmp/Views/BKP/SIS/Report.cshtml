@@ -1,0 +1,140 @@
+﻿@model RckDatabase.SIS_VER_VERSAO[]
+@{
+    ViewBag.Title = "Report";
+    Layout = null;
+}
+<div id="report" class="container">
+    <style type="text/css">
+        body
+        {
+            font-family: Calibri, Candara, Segoe, "Segoe UI" , Optima, Arial, sans-serif;
+            -webkit-print-color-adjust: exact;
+            font-size: 11pt;
+        }
+        
+        .footer
+        {
+            display: none;
+        }
+        .title
+        {
+            color: #1f497d;
+            font-weight: bold;
+            font-size: 16pt;
+        }
+        .strong
+        {
+            color: #365f91;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        
+        .line
+        {
+            border: 2px solid #999;
+            margin-bottom: 40px;
+        }
+        
+        .table-relatorio
+        {
+            width: 100%;
+            border: 1px solid #999 !important;
+        }
+        
+        .table-relatorio td
+        {
+            min-width: 160px;
+            padding: 5px 10px;
+            border: 1px solid #999 !important;
+        }
+    </style>
+    <table>
+        <tr>
+            <td width="75%">
+                <p>
+                    <span class="title">@(Model != null && Model.Length != 0 ? Model[0].VER_SISTEMA : "") </span>
+                </p>
+                <p>
+                    <span class="title">Solicitação de Mudança de Versão – Ambiente Produção</span>
+                </p>
+            </td>
+            <td width="25%">
+                <img alt="" width="100%" src="http://rcksoftware.com.br/IMG/SIS/hubert.png" />
+            </td>
+        </tr>
+    </table>
+    @foreach (var item in Model)
+    {
+        
+        <hr class="line" />
+        <table class="table-relatorio" cellpadding="0" cellspacing="0" border="1">
+            <tr>
+                <td>
+                    <span class="strong">Solicitante:</span>
+                </td>
+                <td>
+                    @item.VER_SOLICITANTE
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="strong">Data:</span>
+                </td>
+                <td>
+                    @(item.VER_DATA == DateTime.MinValue ? "" : item.VER_DATA.ToString("dd/MM/yyyy"))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="strong">Descrição da Mudança:</span>
+                </td>
+                <td>
+                    @item.VER_DESCRICAO
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="strong">Recursos Afetados:</span>
+                </td>
+                <td>
+                    @item.VER_URL
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="strong">Roteiro para teste:</span>
+                </td>
+                <td>
+                    @item.VER_TESTE
+                </td>
+            </tr>
+        </table>    
+    }
+</div>
+<form id="FormArquivo" action="/Rck/Arquivo" method="post">
+<input type="hidden" id="a" name="a" />
+<input type="hidden" id="type" name="type" />
+<input type="hidden" id="filename" name="filename" />
+</form>
+<div class="container">
+    <p>
+        <a class="btn btn-info" href="#" onclick="GravaArquivo()"><i class="fa fa-file-excel-o">
+        </i>Gerar Relatório</a>
+    </p>
+</div>
+<script type="text/javascript">
+    function GravaArquivo() {
+        var s = document.getElementById('report').innerHTML;
+
+        while (s.indexOf("<") != -1)
+        { s = s.replace("<", "["); }
+
+        while (s.indexOf(">") != -1)
+        { s = s.replace(">", "]"); }
+
+        document.getElementById('a').value = s;
+        document.getElementById('type').value = 'doc';
+        document.getElementById('filename').value = 'Sistema Web Produção - Solicitação de mudança.doc';
+        document.getElementById('FormArquivo').submit();
+    }
+</script>

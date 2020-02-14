@@ -1,0 +1,142 @@
+<?  
+  Bcn.new("Database");
+  Bcn.sql(
+      "
+        SELECT 
+          CCN_BANCO, CCN_AGENCIA, CCN_CONTA, 
+          BCN_NUMERO_CHEQUE, BCN_VALOR, BCN_DATA_PGTO,
+          BCN_TIPO_CHEQUE, BCN_DESCRICAO          
+        FROM BCN_BAIXA_CONTAS
+        LEFT OUTER JOIN CCN_CADASTRO_CONTAS ON CCN_CODIGO = BCN_CCN_CODIGO
+        WHERE BCN_CODIGO = {0}"
+  );
+  
+  Cpg.new("Database");
+  Cpg.sql(
+      "SELECT CPG_SEL, FRN_NOME, FRM_NUMERO, FIN_DESCRICAO, CPG_DOCUMENTO, FIN_DATA, CPG_VENCIMENTO, FIN_VALOR FROM CPG_CONTAS_PAGAR 
+      INNER JOIN FIN_FINANCEIRO ON FIN_CODIGO = CPG_FIN_CODIGO
+      LEFT OUTER JOIN FRM_FORMULARIOS ON FRM_CODIGO = FIN_FRM_CODIGO
+      LEFT OUTER JOIN FRN_FORNECEDORES ON FRN_CODIGO = CPG_FRN_CODIGO
+      WHERE CPG_BCN_CODIGO = {0}"
+  );
+
+  //Cfg.new("Database");
+  //Cfg.sql("SELECT CFG_NRIMPRESSAO_BAIXA FROM CFG_CONFIG");
+
+  Emp.new("Database");
+  Emp.sql(
+  " SELECT EMP_DESCRICAO 
+	FROM BCN_BAIXA_CONTAS 
+	INNER JOIN EMP_EMPRESAS ON EMP_CODIGO = BCN_EMP_CODIGO
+	WHERE BCN_CODIGO ={0}"
+  );
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; vertical-align:bottom}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Relatório de Baixa de Conta</h1>
+  <p>
+    Emissao : <?sys.now()?>
+  </p>
+  
+  <?
+    //Campo Banco;
+    $val_tipo_cheque.append("<tr><td><b>Banco</b></td><td>");
+    $val_tipo_cheque.append(Bcn.CCN_BANCO);
+    $val_tipo_cheque.append("</td></tr>");
+    
+    //Campo Agencia;
+    $val_tipo_cheque.append("<tr><td><b>Agência</b></td><td>");
+    $val_tipo_cheque.append(Bcn.CCN_AGENCIA);
+    $val_tipo_cheque.append("</td></tr>");
+    
+    //Campo Conta;
+    $val_tipo_cheque.append("<tr><td><b>Conta</b></td><td>");
+    $val_tipo_cheque.append(Bcn.CCN_CONTA);
+    $val_tipo_cheque.append("</td></tr>");
+    
+    //Campo Numero Cheque;
+    $val_tipo_cheque.append("<tr><td><b>Número do Cheque</b></td><td>");
+    $val_tipo_cheque.append(Bcn.BCN_NUMERO_CHEQUE);
+    $val_tipo_cheque.append("</td></tr>");
+    
+    //Campo Descrição;
+    $val_outros.append("<tr><td><b>Descrição</b></td><td>");
+    $val_outros.append(Bcn.BCN_DESCRICAO);
+    $val_outros.append("</td></tr>");
+    
+    $display.mov(Bcn.BCN_TIPO_CHEQUE);
+    $display.equals(1, $val_tipo_cheque, $val_outros);
+  ?>
+  
+  <table>
+  <tr><td><b>Empresa</b></td><td><?Emp.EMP_DESCRICAO?></td></tr>
+  <?$display?>
+  <tr><td><b>Valor</b></td><td><?$v.mov(Bcn.BCN_VALOR); $v.format("#,##0.00")?></td></tr>
+  <tr><td><b>Data Pgto</b></td><td><?$v.mov(Bcn.BCN_DATA_PGTO); $v.format("dd/MMM")?></td></tr>
+  
+  </table>
+  <br /><br /><br />
+  <table>
+    <tr>
+      <td class='tit'>Sel</td>
+      <td class='tit vlr'>Número</td>
+      <td class='tit'>Fornecedor</td>
+      <td class='tit'>Descrição</td>
+      <td class='tit'>Documento</td>
+      <td class='tit'>Entrada</td>
+      <td class='tit'>Vencimento</td>
+      <?$T_FIN_VALOR.mov(0)?>
+      <td class='tit vlr'>Valor</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2?>
+  <?band.dst(Cpg)?>
+    <tr>    
+      <td><?Cpg.CPG_SEL?></td>
+      <td class='vlr'><?Cpg.FRM_NUMERO?></td>
+      <td><?Cpg.FRN_NOME?></td>
+      <td><?Cpg.FIN_DESCRICAO?></td>
+      <td><?Cpg.CPG_DOCUMENTO?></td>
+      <td><?$v.mov(Cpg.FIN_DATA); $v.format("dd/MMM")?></td>
+      <td><?$v.mov(Cpg.CPG_VENCIMENTO); $v.format("dd/MMM")?></td>
+      <?$T_FIN_VALOR.add(Cpg.FIN_VALOR)?>
+      <td class='vlr'><?$v.mov(Cpg.FIN_VALOR); $v.format("#,##0.00")?></td>
+    </tr>
+<?endband1?>
+  <!-- Rodapé do Relatório -->
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+      <td class='sum' colspan='3'>TOTAL</td>      
+      <td class='sum'>&nbsp;</td>
+      <td class='sum'>&nbsp;</td>
+      <td class='sum cen'>&nbsp;</td>
+      <td class='sum cen'>&nbsp;</td>
+      <td class='sum vlr'><?$T_FIN_VALOR.format("#,##0.00")?></td>
+    </tr>
+  </table>
+</div>

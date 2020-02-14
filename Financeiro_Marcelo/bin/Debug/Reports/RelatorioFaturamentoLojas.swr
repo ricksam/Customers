@@ -1,0 +1,274 @@
+<? 
+  param.add("Período base de:", date, sys.date());
+  param.add("Período base ate:", date, sys.date());
+  param.add("Período comparativo de:", date, sys.date());
+  param.add("Período comparativo ate:", date, sys.date());
+  param.show();
+  
+  $DtBaseDe.mov(param.get(0));
+  $DtBaseAte.mov(param.get(1));
+  $DtCompDe.mov(param.get(2));
+  $DtCompAte.mov(param.get(3));
+  
+  D.new("Database");
+  Fin.new("Database");
+  
+  D.sql("select * from EMP_EMPRESAS");
+    
+  $sql_total=
+  "
+  select sum(FIN_VALOR) as TOTAL from FIN_FINANCEIRO
+      inner join CAT_CATEGORIAS on CAT_CODIGO = FIN_CAT_CODIGO
+      inner join PLN_PLANOCONTAS on PLN_CODIGO = FIN_PLN_CODIGO not in(64)
+      where 
+        FIN_EMP_CODIGO = {0}
+        AND FIN_DATA >= {1}
+        AND FIN_DATA <= {2}
+  "; 
+  
+  $sql_trocoinicial = "select sum(FRM_TROCOINICIAL) as TOTAL from FRM_FORMULARIOS where FRM_EMP_CODIGO = {0} and FRM_DATA = {1}";
+  $sql_trocofinal = "select sum(FRM_TROCOFINAL) as TOTAL from FRM_FORMULARIOS where FRM_EMP_CODIGO = {0} and FRM_DATA = {1}";    
+  
+  $sql_clientes =
+    "
+      select sum(frm_numero_clientes) as TOTAL from frm_formularios 
+      where 
+        frm_emp_codigo = {0} and
+        frm_data >= {1} and
+        frm_data <= {2}
+    ";
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+      font-family:Verdana, Arial;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial, Verdana; font-size:14pt;}
+    p{font-family:Verdana, Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Arial, Verdana;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom; border:solid 1px #777}
+    td.tit{font-weight:bold; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{font-weight:bold;border-top:1px solid #000; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabecalho do Relatório -->
+  <h1>Relatório Faturamento Lojas</h1>
+  <p>Emissao : <?sys.now()?></p>
+  <table>
+    <tr>
+      <td class='tit cen'>PerÃ­odo</td>
+      <td class='tit cen' colspan="3"><?$DtBaseDe.format("dd")?> a <?$DtBaseAte.format("dd MMMM")?></td>
+      <td class='tit cen' colspan="3"><?$DtCompDe.format("dd")?> a <?$DtCompAte.format("dd MMMM")?></td>
+      <td class='tit cen' colspan="2">Resultado</td>
+    </tr>
+    <tr>
+      <td class='tit cen'>Loja</td>
+      <td class='tit cen'>Jun/11</td>
+      <td class='tit cen'>Clientes</td>
+      <td class='tit cen'>VD/CLIE</td>
+      <td class='tit cen'>Jul/11</td>
+      <td class='tit cen'>Clientes</td>
+      <td class='tit cen'>VD/CLIE</td>
+      <td class='tit cen'>% Vendas</td>
+      <td class='tit cen'>% Clientes</td>
+    </tr>
+  <!-- ConteÃºdo do RelatÃ³rio -->
+<?band2:band1?>
+  <?band.dst(D);?>
+    <tr>
+      <td><?D.EMP_DESCRICAO?></td>
+      <?
+        //Total;
+        strparam.clear();
+        strparam.add(D.EMP_CODIGO, string);
+        strparam.add($DtBaseDe, date);
+        strparam.add($DtBaseAte, date);
+        Fin.sql($sql_total);
+        $Total.mov(Fin.TOTAL);
+            
+        //Troco Inicial;
+        strparam.clear();
+        strparam.add(D.EMP_CODIGO, string);
+        strparam.add($DtBaseDe, date);
+        Fin.sql($sql_trocoinicial);
+        $TrocoInicial.mov(Fin.TOTAL);
+        
+        //Troco Final;
+        strparam.clear();
+        strparam.add(D.EMP_CODIGO, string);
+        strparam.add($DtBaseAte, date);
+        Fin.sql($sql_trocofinal);
+        $TrocoFinal.mov(Fin.TOTAL);
+        
+        //Venda Liquida;
+        $Base_VendaLiquida = $Total + $TrocoFinal - $TrocoInicial;    
+        
+        // Clientes;
+        strparam.clear();
+        strparam.add(D.EMP_CODIGO, string);
+        strparam.add($DtBaseDe, date);
+        strparam.add($DtBaseAte, date);
+        Fin.sql($sql_clientes);
+        $Base_Clientes.mov(Fin.TOTAL);
+        $VdCli = $Base_VendaLiquida / $Base_Clientes;
+        
+        $Final_Base_VendaLiquida.add($Base_VendaLiquida);
+        $Final_Base_Clientes.add($Base_Clientes);    
+      ?>
+      <td class='vlr'><?$Base_VendaLiquida.format("#,##0.00")?></td>
+      <td class='vlr'><?$Base_Clientes.format("#,##0")?></td>
+      <td class='vlr'><?$VdCli.format("#,##0.00")?></td>
+      <?
+        //Total;
+        strparam.clear();
+        strparam.add(D.EMP_CODIGO, string);
+        strparam.add($DtCompDe, date);
+        strparam.add($DtCompAte, date);
+        Fin.sql($sql_total);
+        $Total.mov(Fin.TOTAL);
+            
+        //Troco Inicial;
+        strparam.clear();
+        strparam.add(D.EMP_CODIGO, string);
+        strparam.add($DtCompDe, date);
+        Fin.sql($sql_trocoinicial);
+        $TrocoInicial.mov(Fin.TOTAL);
+        
+        //Troco Final;
+        strparam.clear();
+        strparam.add(D.EMP_CODIGO, string);
+        strparam.add($DtCompAte, date);
+        Fin.sql($sql_trocofinal);
+        $TrocoFinal.mov(Fin.TOTAL);
+        
+        //Venda Liquida;
+        $Comp_VendaLiquida = $Total + $TrocoFinal - $TrocoInicial;    
+        
+        // Clientes;
+        strparam.clear();
+        strparam.add(D.EMP_CODIGO, string);
+        strparam.add($DtCompDe, date);
+        strparam.add($DtCompAte, date);
+        Fin.sql($sql_clientes);
+        $Comp_Clientes.mov(Fin.TOTAL);
+        $VdCli = $Comp_VendaLiquida / $Comp_Clientes;
+        
+        $Final_Comp_VendaLiquida.add($Comp_VendaLiquida);
+        $Final_Comp_Clientes.add($Comp_Clientes);    
+      ?>
+      <td class='vlr'><?$Comp_VendaLiquida.format("#,##0.00")?></td>
+      <td class='vlr'><?$Comp_Clientes.format("#,##0")?></td>
+      <td class='vlr'><?$VdCli.format("#,##0.00")?></td>
+      
+      <?
+        $Perc_Venda = (($Comp_VendaLiquida / $Base_VendaLiquida)-1) * 100;
+        $Perc_Clientes = (($Comp_Clientes / $Base_Clientes)-1) * 100;        
+      ?>
+      <td class='vlr'><?$Perc_Venda.format("#,##0.00")?></td>
+      <td class='vlr'><?$Perc_Clientes.format("#,##0.00")?></td>
+    </tr>
+<?band3:band1?>
+  <?
+    $Perc_Final_Venda = (($Final_Comp_VendaLiquida / $Final_Base_VendaLiquida)-1) * 100;
+    $Perc_Final_Clientes = (($Final_Comp_Clientes / $Final_Base_Clientes)-1) * 100;
+  ?>
+  <tr>
+    
+    <td class='tit'>TOTAIS</td>
+    <td class='tit vlr'><?$Final_Base_VendaLiquida.format("#,##0.00")?></td>
+    <td class='tit vlr'><?$Final_Base_Clientes.format("#,##0")?></td>
+    <td class='tit vlr'><?$Final_VdCli = $Final_Base_VendaLiquida / $Final_Base_Clientes; $Final_VdCli.format("#,##0.00")?></td>
+    <td class='tit vlr'><?$Final_Comp_VendaLiquida.format("#,##0.00")?></td>
+    <td class='tit vlr'><?$Final_Comp_Clientes.format("#,##0")?></td>
+    <td class='tit vlr'><?$Final_VdCli = $Final_Comp_VendaLiquida / $Final_Comp_Clientes; $Final_VdCli.format("#,##0.00")?></td>
+    <td class='tit vlr'><?$Perc_Final_Venda.format("#,##0.00")?></td>
+    <td class='tit vlr'><?$Perc_Final_Clientes.format("#,##0.00")?></td>
+  </tr>
+<?endband1?>
+  </table>
+  
+  <script src="http://www.rcksoftware.com.br/bin/jquery-1.6.2.js"></script> 
+	<script src="http://www.rcksoftware.com.br/bin/jquery.ui.datepicker.js"></script> 
+  
+  <script> 
+	$(function() {
+		$("#datepicker1").datepicker(
+      {
+        dateFormat: 'dd/mm/yy',
+        dayNames: [
+        'Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
+        ],
+        dayNamesMin: [
+        'D','S','T','Q','Q','S','S','D'
+        ],
+        dayNamesShort: [
+        'Dom','Seg','Ter','Qua','Qui','Sex','Sab','Dom'
+        ],
+        monthNames: [
+        'Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro',
+        'Outubro','Novembro','Dezembro'
+        ],
+        monthNamesShort: [
+        'Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set',
+        'Out','Nov','Dez'
+        ],
+        nextText: '',
+        prevText: ''
+    });    
+    $("#datepicker1").datepicker( "setDate" , new Date("<?$DtBaseDe.format("MM/dd/yyyy")?>") );
+    $("#datepicker2").datepicker(
+      {
+        dateFormat: 'dd/mm/yy',
+        dayNames: [
+        'Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
+        ],
+        dayNamesMin: [
+        'D','S','T','Q','Q','S','S','D'
+        ],
+        dayNamesShort: [
+        'Dom','Seg','Ter','Qua','Qui','Sex','Sab','Dom'
+        ],
+        monthNames: [
+        'Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro',
+        'Outubro','Novembro','Dezembro'
+        ],
+        monthNamesShort: [
+        'Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set',
+        'Out','Nov','Dez'
+        ],
+        nextText: '',
+        prevText: ''
+    });    
+    $("#datepicker2").datepicker( "setDate" , new Date("<?$DtCompDe.format("MM/dd/yyyy")?>") );
+	});
+  
+  
+	</script> 
+  
+  <br style="clear:both" />
+  <br style="clear:both" />
+  
+  <div id="datepicker1" style="float:left; margin:10px 30px;"></div>
+  <div id="datepicker2" style="float:left; margin:10px 30px;"></div>
+  
+    <br style="clear:both" />
+	<br /><br /><br /><br />
+	<br style="clear:both" />
+
+</div>
+
+

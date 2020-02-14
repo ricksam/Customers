@@ -1,0 +1,119 @@
+<?   
+  param.add("Período de: ", date, sys.now());
+  param.add("Período ate: ", date, sys.now());
+  param.show();
+
+  Cfg.new("Database");
+  Cfg.sql("SELECT CFG_NRIMPRESSAO_BAIXA FROM CFG_CONFIG");
+  
+  Cheques.new("Database");
+  Contas.new("Database");
+    
+  Cheques.sql(
+      "SELECT BCN_CODIGO, BCN_DATA_PGTO, BCN_NUMERO_CHEQUE, BCN_DESCRICAO, CCN_BANCO FROM BCN_BAIXA_CONTAS
+      LEFT OUTER JOIN CCN_CADASTRO_CONTAS ON CCN_CODIGO = BCN_CCN_CODIGO
+      WHERE 
+        BCN_DATA_PGTO >= {0} 
+        AND  BCN_DATA_PGTO <= {1}
+      ORDER BY
+        BCN_DATA_PGTO, BCN_CODIGO      
+      "
+  );
+  
+  $sql_contas = 
+    " SELECT 
+        FIN_EMISSAO, EMP_DESCRICAO, FIN_DATA, FRM_NUMERO, CPG_VENCIMENTO, CPG_DOCUMENTO, FRN_NOME, FIN_DESCRICAO, FIN_VALOR 
+      FROM CPG_CONTAS_PAGAR 
+      INNER JOIN FIN_FINANCEIRO ON FIN_CODIGO = CPG_FIN_CODIGO
+      INNER JOIN EMP_EMPRESAS ON EMP_CODIGO = FIN_EMP_CODIGO
+      LEFT OUTER JOIN FRM_FORMULARIOS ON FRM_CODIGO = FIN_FRM_CODIGO
+      LEFT OUTER JOIN FRN_FORNECEDORES ON FRN_CODIGO = CPG_FRN_CODIGO 
+      WHERE CPG_BCN_CODIGO = {0}";
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; text-decoration:underline; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:8pt;padding:0 5px; vertical-align:bottom}
+    td.tit{color:#365f91; vertical-align:middle; font-weight:bold}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Lançamentos pagos</h1>
+  <p>
+    Emissao : <?sys.now()?><br />
+    Período de <?$v.mov(param.get(0)); $v.format("dd/MM/yyyy")?> até <?$v.mov(param.get(1)); $v.format("dd/MM/yyyy")?><br />
+	Nro. Impressão : <?Cfg.CFG_NRIMPRESSAO_BAIXA?>
+  </p>
+  <table>    
+    <tr>
+      <td class='tit cen'>Pgto</td>
+      <td class='tit cen'>Emissão</td>
+      <td class='tit'>Loja</td>
+      <td class='tit cen'>Entrada</td>
+	  <td class='tit cen'>Vencimento</td>
+      <td class='tit vlr'>Form.</td>
+      <td class='tit' width='90'>Documento</td>
+      <td class='tit' width='120'>Fornecedor</td>
+      <td class='tit' width='120'>Descrição</td>
+      <td class='tit vlr'>Valor</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2:band1?>
+  <?
+    band.dst(Cheques);
+    $Total = 0;
+    strparam.clear();
+    strparam.add(Cheques.BCN_CODIGO, int);
+    Contas.sql($sql_contas);
+  ?>
+    <tr>
+      <td class='tit cen'><?$v.mov(Cheques.BCN_DATA_PGTO); $v.format("dd/MMM")?></td>      
+    </tr>
+<?band3:band2?>
+  <?band.dst(Contas);?>
+    <tr>
+      <td></td>
+      <td class='cen'><?$v.mov(Contas.FIN_EMISSAO); $v.format("dd/MMM")?></td>
+      <td><?Contas.EMP_DESCRICAO?></td>
+      <td class='cen'><?$v.mov(Contas.FIN_DATA); $v.format("dd/MMM")?></td>
+	  <td class='cen'><?$v.mov(Contas.CPG_VENCIMENTO); $v.format("dd/MMM")?></td>
+      <td class='vlr'><?Contas.FRM_NUMERO?></td>
+      <td ><?Contas.CPG_DOCUMENTO?></td>
+      <td ><?Contas.FRN_NOME?></td>
+      <td ><?Contas.FIN_DESCRICAO?></td>
+      <td class='vlr'><?$v.mov(Contas.FIN_VALOR); $Total.add($v); $v.format("#,##0.00")?></td>
+    </tr>
+<?endband2?>
+  <?$Resultado.add($Total)?>
+  <tr>
+    <td colspan='4'></td>
+    <td colspan='4' class='tit vlr'><?Cheques.CCN_BANCO?> <?Cheques.BCN_NUMERO_CHEQUE?> <?Cheques.BCN_DESCRICAO?></td>    
+    <td class='tit vlr'><?$Total.format("#,##0.00")?></td>
+  </tr>
+<?endband1?>
+    <tr><td colspan='9'><hr /></td></tr>
+    <tr>
+      <td colspan='8' class='tit'>Total Geral</td>
+      <td class='tit vlr'><?$Resultado.format("#,##0.00")?></td>
+    </tr>
+  </table>
+</div>

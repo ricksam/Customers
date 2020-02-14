@@ -1,0 +1,164 @@
+<? 
+  $sqlEmpresa = "select * from emp_empresas";  
+  param.add("Data De:", date, sys.date());
+  param.add("Data Ate:", date, sys.date());  
+  param.add("Empresa", int, "Database", $sqlEmpresa, "EMP_CODIGO", "EMP_DESCRICAO");
+  param.show();
+    
+  CatRec.new("Database");
+  //CatDesp.new("Database");
+  Fin.new("Database");
+  FinEmp.new("Database");  
+  Emp.new("Database");
+  
+  Emp.sql("select * from emp_empresas where EMP_CODIGO = {2}");
+  
+  $DataDe.mov(param.get(0));
+  $DataAte.mov(param.get(1));
+  $CodEmpresa.mov(param.get(2));
+  $Empresa.mov(Emp.EMP_DESCRICAO);
+    
+  CatRec.sql(
+    "
+      SELECT CAT_CODIGO, CAT_DESCRICAO FROM FIN_FINANCEIRO
+      INNER JOIN CAT_CATEGORIAS ON CAT_CODIGO = FIN_CAT_CODIGO AND CAT_TIPO = 'R'	  
+      WHERE
+        FIN_DATA >= {0} AND 
+        FIN_DATA <= {1} AND
+        FIN_EMP_CODIGO = {2}
+      GROUP BY
+        CAT_CODIGO, CAT_DESCRICAO
+    "
+  ); 
+  
+  //CatDesp.sql(
+    //"
+     // SELECT CAT_CODIGO, CAT_DESCRICAO FROM FIN_FINANCEIRO
+     // INNER JOIN CAT_CATEGORIAS ON CAT_CODIGO = FIN_CAT_CODIGO AND CAT_TIPO = 'D'
+    //  WHERE
+    //    FIN_DATA >= {0} AND 
+     //   FIN_DATA <= {1} AND
+     //   FIN_EMP_CODIGO = {2}        
+     // GROUP BY
+     //   CAT_CODIGO, CAT_DESCRICAO
+   // "
+  //);
+      
+  $sqlfin = 
+      "
+        SELECT FIN_CAT_CODIGO, FIN_PLN_CODIGO, PLN_DESCRICAO, SUM(FIN_VALOR) AS TOTAL FROM FIN_FINANCEIRO
+        INNER JOIN PLN_PLANOCONTAS ON PLN_CODIGO = FIN_PLN_CODIGO 
+        WHERE
+          FIN_DATA >= {0} AND 
+          FIN_DATA <= {1} AND  
+          FIN_EMP_CODIGO = {2} AND     
+          PLN_CAT_CODIGO = {3} 
+        GROUP BY
+          FIN_CAT_CODIGO, FIN_PLN_CODIGO, PLN_DESCRICAO
+		ORDER 
+		  BY PLN_PRIORIDADE, FIN_PLN_CODIGO
+      ";
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1 { font-family:Arial; font-size:14pt; color:#365f91; font-weight:normal }
+    body { font-family:Arial; font-size:8pt }    
+	.cabecalho
+	{
+	  font-size:10pt; 
+	  line-heght:20px; 
+	  padding:10px 0px; 
+	  font-weight:bold; 
+	  float:left;
+	}
+    .tipo { width:260px; }
+	.empresa { width:90px; text-align:right; }
+	.categoria { font-size:10pt; line-heght:20px; padding:10px 30px; font-weight:bold }    
+    .plano 
+    { 
+      float:left;
+      font-size:10pt; 
+      line-height:20px; 
+      margin-left:60px; 
+      width:200px;
+	  border-bottom:dotted 1px #000;
+    }   
+    .totplano
+    {
+      float:left;
+      font-size:10pt; 
+      line-height:20px; 
+      width:90px;
+      text-align:right;
+	  border-bottom:dotted 1px #000;
+    }
+    .total{ font-weight:bold }    
+	.subtotal{ padding:10px 30px; width:260px; }
+    .titulo{ float:left; }
+    .clear{ clear:both }
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Total por plano de contas</h1>
+  <p>
+    Filtro: Data de <?$DataDe.format("dd/MM/yyyy")?> ate <?$DataAte.format("dd/MM/yyyy")?><br />
+	Empresa: <?$Empresa?><br />
+    Emissao : <?sys.now()?>
+  </p>
+  
+<?band2:band1?>  
+  <div class="cabecalho tipo">Receitas</div>
+  <div class="cabecalho empresa">TOTAL</div>
+  <br class="clear" />
+  
+<?band4:band1?>
+  <?band.dst(CatRec)?>
+  <?
+    strparam.clear();
+    strparam.add($DataDe, date);
+    strparam.add($DataAte, date);    
+	strparam.add($CodEmpresa, int);    
+    strparam.add(CatRec.CAT_CODIGO, int);    
+    Fin.sql($sqlfin); 
+	$TotCatRec.mov(0);
+  ?>
+  <div class="categoria"><?CatRec.CAT_DESCRICAO?></div>  
+
+<?band5:band4?>
+  <?band.dst(Fin);?>
+  <div class="plano">
+    <a href="Lancamentos_Empresa.swr?'<?$DataDe.format("yyyy-MM-dd")?>'&'<?$DataAte.format("yyyy-MM-dd")?>'&<?Fin.FIN_PLN_CODIGO?>&<?$CodEmpresa?>">
+      <?Fin.PLN_DESCRICAO?>
+    </a>
+  </div>  
+  <div class="totplano"><?$v.mov(Fin.TOTAL); $TotCatRec.add($v); $v.format("#,##0.00")?></div>
+  <br class="clear" />
+  
+<?endband4?>
+  <div class="cabecalho subtotal">Total</div>
+  <div class="cabecalho empresa"><?$TotRec.add($TotCatRec); $TotCatRec.format("#,##0.00")?></div>
+  <br class="clear" />
+  
+<?band6:band1?>
+  <div class="cabecalho tipo">Total de Receitas</div>
+  <div class="cabecalho empresa"><?$TotRec.format("#,##0.00")?></div>
+  <br class="clear" />
+  <br class="clear" />
+  
+  
+<?endband1?>
+</div>

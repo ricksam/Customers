@@ -1,0 +1,25 @@
+select
+  emp.cnpj as cnpj,
+  emp.fantasia as empresa,
+  vda.dtemissao as emissao,
+  oper.codoper as cod_operador,
+  oper.nome as operador,
+  count(vda.idvdapdv) as cupons,
+  min(vda.hremissao) as inicio,
+  sum(vda.vlrtotal) as total
+from
+  vdapdv vda
+left outer join empresa emp on emp.cnpj <> ''
+inner join cdoperadores oper on
+  oper.codoper = vda.codoper
+where
+  dtemissao >= getdate()-5 and
+  dtemissao <= getdate() and
+  codmovimento = 100 and
+  cancelado <> 'S'
+group by
+  emp.cnpj,
+  emp.fantasia,
+  vda.dtemissao,
+  oper.codoper,
+  oper.nome

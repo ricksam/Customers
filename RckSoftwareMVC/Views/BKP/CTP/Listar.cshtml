@@ -1,0 +1,39 @@
+﻿@model RckSoftwareMVC.CTP_AUT_AUTORIZADOS[]
+@{
+  ViewBag.Title = "Listar";
+}
+<h2>
+  Visitantes</h2>
+<table>
+  <tr>
+    <th>
+      Nome
+    </th>
+    <th>
+      Titulo
+    </th>
+    <th style="width:100px;">
+    </th>
+  </tr>
+  @foreach (var aut in Model)
+  {
+    <tr>
+      <td>@aut.AUT_NOME
+      </td>
+      <td>@aut.AUT_TITULO
+      </td>
+      <td>
+        <a href="/CTP/Alterar/@(aut.AUT_CODIGO)">
+          <img width="32" height="32" alt="visualizar" src="../../Templates/CTP/img/view.png" /></a>
+        <a href="/CTP/Remover/@(aut.AUT_CODIGO)">
+          <img width="32" height="32" alt="remover" src="../../Templates/CTP/img/remove.png" /></a>
+      </td>
+    </tr>  
+  }
+</table>
+<form action="/CTP/Incluir" method="get">
+<button type="submit" class="s4">
+  Incluir Visitantes</button>
+</form>
+<br />
+<a href="/CTP/LogOff">Sair</a> 

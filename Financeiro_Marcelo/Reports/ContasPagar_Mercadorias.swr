@@ -1,0 +1,101 @@
+<?  
+  $sql_empresa = "SELECT * FROM EMP_EMPRESAS";
+    
+  param.add("Loja: ", int, "Database", $sql_empresa, "EMP_CODIGO", "EMP_DESCRICAO");  
+  param.show();
+  
+  D.new("Database");
+  D.sql(
+      "select 
+        frn_nome,
+        fin_data, fin_emissao, 
+        cpg_vencimento, frm_numero,
+        cpg_documento, fin_descricao, fin_valor 
+      from fin_financeiro
+      inner join cpg_contas_pagar on cpg_fin_codigo = fin_codigo 
+      left outer join frm_formularios on frm_codigo = fin_frm_codigo
+      left outer join frn_fornecedores on frn_codigo = cpg_frn_codigo
+      where              
+        FIN_CAT_CODIGO = 5 and
+		cpg_bcn_codigo is null and        
+        fin_emp_codigo = {0}"
+  );
+  
+  Empresa.new("Database");
+  Empresa.sql("SELECT * FROM EMP_EMPRESAS WHERE EMP_CODIGO = {0}");
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; font-weight:normal}
+	h2{font-family:Arial; font-size:12pt; color:#365f91; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Contas à Pagar (Mercadorias)</h1>
+  <h2>Loja : <?Empresa.EMP_DESCRICAO?></h2>
+  <p>
+  Emissao : <?sys.now()?><br />
+  </p>
+  <table>
+    <tr>      
+      <td class='tit cen'>Entrada</td>
+      <td class='tit cen'>Emissão</td>
+      <td class='tit cen'>Vencimento</td>
+      <td class='tit vlr'>Formulário</td>
+      <td class='tit'>Documento</td>
+      <td class='tit'>Fornecedor</td>
+      <td class='tit'>Descricao</td>
+      <?$T_fin_valor.mov(0)?>
+      <td class='tit vlr'>Valor</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2?>
+  <?band.dst(D)?>
+    <tr>      
+      <td class='cen'><?$v.mov(D.fin_data); $v.format("dd/MM/yyyy")?></td>
+      <td class='cen'><?$v.mov(D.fin_emissao); $v.format("dd/MM/yyyy")?></td>
+      <td class='cen'><?$v.mov(D.cpg_vencimento); $v.format("dd/MM/yyyy")?></td>
+      <td class='vlr'><?D.frm_numero?></td>
+      <td ><?D.cpg_documento?></td>
+      <td><?D.frn_nome?></td>
+      <td ><?D.fin_descricao?></td>
+      <?$T_fin_valor.add(D.fin_valor)?>
+      <td class='vlr'><?$v.mov(D.fin_valor); $v.format("#,##0.00")?></td>
+    </tr>
+<?endband1?>
+  <!-- Rodapé do Relatório -->
+    <tr><td>&nbsp;</td></tr>
+    <tr>      
+      <td class='sum cen'>&nbsp;</td>
+      <td class='sum cen'>&nbsp;</td>
+      <td class='sum cen'>&nbsp;</td>
+      <td class='sum vlr'>&nbsp;</td>
+      <td class='sum'>&nbsp;</td>
+      <td class='sum'>&nbsp;</td>
+      <td class='sum'>&nbsp;</td>
+      <td class='sum vlr'><?$T_fin_valor.format("#,##0.00")?></td>
+    </tr>
+  </table>
+  <br style="clear:both" />
+</div>

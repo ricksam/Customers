@@ -1,0 +1,97 @@
+﻿@model List<SysPoint.Models.Coordenadas>
+@{
+    ViewBag.Title = "Map";
+    Layout = "~/Views/Shared/_LayoutNav.cshtml";
+
+    string centralize = "";
+    double LatitudeMedia = 0;
+    double LongitudeMedia = 0;
+    List<string> list_locations = new List<string>();
+
+    foreach (var item in Model)
+    {
+        LatitudeMedia += item.Latitude;
+        LongitudeMedia += item.Longitude;
+
+
+        list_locations.Add(string.Format("['{0}',{1},{2}]",
+            item.Qtde.ToString() + " registros ",
+            item.Latitude.ToString("0.000").Replace(",", "."),
+            item.Longitude.ToString("0.000").Replace(",", ".")));
+    }
+
+    centralize = string.Format("{0}, {1}",
+        (LatitudeMedia/Model.Count).ToString("0.000").Replace(",", "."),
+        (LongitudeMedia/Model.Count).ToString("0.000").Replace(",", "."));
+
+    string locations = String.Join(",", list_locations);
+}
+@section styles{
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+        #map {
+            height: 100%;
+            color: black;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+}
+
+<div id="map"></div>
+<script>
+        function initMap() {
+
+            var locations = [@Html.Raw(locations)];
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 9,
+                center: new google.maps.LatLng(@Html.Raw(centralize)),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+
+            var infowindow = new google.maps.InfoWindow();
+
+            var marker, i;
+
+            //More icons in:
+            //kml4earth.appspot.com/icons.html
+            for (i = 0; i < locations.length; i++) {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                    map: map,
+                    title: 'Nome da Unidade',
+                    //label: 'Label marker',
+                    icon: {
+                        url: "http://maps.google.com/mapfiles/kml/paddle/grn-circle.png",
+                        size: new google.maps.Size(64, 64),
+                        scaledSize: new google.maps.Size(40, 40),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(0, 0)
+                    }
+                });
+
+                google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                    return function () {
+                        infowindow.setContent(locations[i][0]);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, i));
+            }
+        }
+
+</script>
+
+
+@section scripts{
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD19DhcQiAo5-9s3IcTTL9ygnYsGq0mhGU&callback=initMap">
+    </script>
+
+}

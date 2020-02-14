@@ -1,0 +1,74 @@
+<?
+  param.add("Empresa : ", int, "Database", "SELECT * FROM EMP_EMPRESA WHERE EMP_INATIVO = 0 OR EMP_INATIVO IS NULL", "EMP_CODIGO", "EMP_NOME");
+  param.show();
+  
+  D.new("Database");
+  D.sql(
+      "SELECT 
+        CLB_NOME, 
+        CLB_FONE, 
+        CLB_BAIRRO, 
+        CLB_CIDADE,
+        CLB_EXPERIENCIA,
+        CLB_TERMINO_EXPERIENCIA  
+      FROM CLB_COLABORADOR
+      WHERE 
+        CLB_EMP_CODIGO = {0} AND
+        CLB_INATIVO = 1"
+  );
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; text-decoration:underline; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Colaboradores - Ativos</h1>
+  <p>
+    Emissao : <?sys.now()?><br />
+    Empresa : <?param.getdisplay(0)?>
+  </p>
+  <table>
+    <tr>
+      <td class='tit'>Nome</td>
+      <td class='tit'>Fone</td>
+      <td class='tit'>Bairro</td>
+      <td class='tit'>Cidade</td>
+      <td class='tit cen'>Em experiência</td>
+      <td class='tit cen'>Termino Experiência</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2:band1?>
+  <?band.dst(D)?>
+    <tr>
+      <td ><?D.CLB_NOME?></td>
+      <td ><?D.CLB_FONE?></td>
+      <td ><?D.CLB_BAIRRO?></td>
+      <td ><?D.CLB_CIDADE?></td>
+      <td class='cen'><?$v.mov("True"); $v.equals(D.CLB_EXPERIENCIA, "Sim", "Não"); $v?></td>
+      <td class='cen'><?$v.mov(D.CLB_TERMINO_EXPERIENCIA); $v.format("dd/MM/yyyy")?></td>
+    </tr>
+<?endband1?>
+  </table>
+</div>

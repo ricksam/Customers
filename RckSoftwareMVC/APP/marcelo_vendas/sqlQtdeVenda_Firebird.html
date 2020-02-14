@@ -1,0 +1,16 @@
+select 
+  cnpj,
+  fantasia as empresa,
+  dtemissao as emissao,
+  min(idvdapdv) as menor, 
+  max(idvdapdv) as maior, 
+  count(idvdapdv) as contagem,
+  max(idvdapdv) - (min(idvdapdv)-1) as diferenca
+from vdapdv , empresa
+where 
+  dtemissao >= current_date-5 and
+  dtemissao <= current_date 
+group by 
+  cnpj,
+  fantasia,
+  dtemissao

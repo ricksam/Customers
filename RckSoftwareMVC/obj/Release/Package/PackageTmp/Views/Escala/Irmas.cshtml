@@ -1,0 +1,70 @@
+﻿@model List<string>
+@{
+    Layout = null;
+    int count = 0;
+}
+
+<div class="card" >
+    <div class="card-body">
+        <h5 class="card-title">Irmãs</h5>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                count++;
+                if (string.IsNullOrEmpty(item)) { continue; }
+
+            <div class="col-sm-6 col-md-6 form-group">
+                <input type="hidden" name="Nomes" value="@item" />
+                <div class="input-group">
+                    <span class="form-control">@count - @item</span>
+                    <button type="button" class="btn btn-danger" onclick="RemoveIrma('@item')">X</button>
+                </div>
+            </div>
+                
+            }
+        </div>
+        @*<table class="table">
+            @foreach (var item in Model)
+            {
+                count++;
+                if (string.IsNullOrEmpty(item)) { continue; }
+                <tr>
+                    <td>
+                        <input type="hidden" name="Nomes" value="@item" />
+                        <div class="input-group">
+                            <span class="form-control">@count - @item</span>
+                            <button type="button" class="btn btn-danger" onclick="RemoveIrma('@item')">X</button>
+                        </div>
+                         
+                        
+                    </td>
+                </tr>
+            }
+        </table>*@
+        <div class="input-group">
+            <input id="novo_nome" type="text" class="form-control" name="Nomes" value="" onkeypress="return NomeKeyPress(event)" autofocus />
+            <button type="button" class="btn btn-primary" onclick="AddIrma()">+</button>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+    function AddIrma() {
+        rsp.post("#Irmas", "/Escala/Irmas", function (res) {
+            $("#Irmas").html(res);
+            $("#novo_nome").focus();
+        });
+    }
+
+    function RemoveIrma(nome) {
+        rsp.post("#Irmas", "/Escala/RemoveIrma/"+nome, "#Irmas");
+    }
+
+    function NomeKeyPress(e) {
+        if (e.keyCode == 13) {
+            AddIrma();
+            return false;
+        }
+    }
+</script>

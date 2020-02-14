@@ -1,0 +1,166 @@
+<?
+  $sql_colaborador = "SELECT CLB_CODIGO, CLB_NOME ||' ( '||EMP_NOME ||' ) ' AS NOME  FROM CLB_COLABORADOR
+                  INNER JOIN EMP_EMPRESA ON EMP_CODIGO = CLB_EMP_CODIGO
+                  ORDER BY 2";
+  
+  param.add("Mês: ", int);
+  param.add("Ano: ", int);
+  param.add("Colaborador: ", int, "Database", $sql_colaborador, "CLB_CODIGO", "NOME");
+  param.show(); 
+  
+  Colaborador.new("Database");
+  Colaborador.sql("SELECT CLB_NOME, EMP_NOME  FROM CLB_COLABORADOR
+                  INNER JOIN EMP_EMPRESA ON EMP_CODIGO = CLB_EMP_CODIGO
+                  WHERE CLB_CODIGO = {2} ");
+  
+  Diario.new("Database");
+  Diario.sql(
+      "SELECT 
+        LCD_DIA,
+        OPR_DESCRICAO,
+        LCD_DESCRICAO,
+        LCD_REFERENCIA,
+        OPR_TIPO,
+        LCD_VALOR
+      FROM LCD_LANCAMENTO_DIARIO 
+                INNER JOIN OPR_OPERACAO ON OPR_CODIGO = LCD_OPR_CODIGO
+                WHERE LCD_MES = {0} AND LCD_ANO = {1} AND LCD_CLB_CODIGO = {2} 
+      ORDER BY LCD_DIA"
+  );
+  
+  Resumo.new("Database");
+  Resumo.sql(
+      "SELECT 
+        OPR_DESCRICAO,
+        LNC_REFERENCIA,
+        OPR_TIPO,
+        LNC_VALOR
+      FROM LNC_LANCAMENTO 
+      INNER JOIN OPR_OPERACAO ON OPR_CODIGO = LNC_OPR_CODIGO
+      WHERE LNC_MES = {0} AND LNC_ANO = {1} AND LNC_CLB_CODIGO = {2}
+      ORDER BY OPR_TIPO, OPR_NIVEL"
+  );
+  
+  Total.new("Database");
+  Total.sql(
+      "SELECT   
+        OPR_TIPO,
+        SUM(LNC_VALOR) AS VALOR
+      FROM LNC_LANCAMENTO 
+      INNER JOIN OPR_OPERACAO ON OPR_CODIGO = LNC_OPR_CODIGO
+      WHERE LNC_MES = {0} AND LNC_ANO = {1} AND LNC_CLB_CODIGO = {2} AND OPR_TIPO IN ('C','D')
+      GROUP BY OPR_TIPO
+      ORDER BY OPR_TIPO"
+  );
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; text-decoration:underline; font-weight:normal}
+    h2{font-family:Arial; font-size:12pt; color:#aaa; font-weight:bold}
+    p{font-family:Arial; font-size:8pt}
+    table {width:800px; border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Lançamentos por Colaborador</h1>
+  <p>
+    Emissao : <?sys.now()?><br />
+    Colaborador : <?Colaborador.CLB_NOME?><br />
+    Loja : <?Colaborador.EMP_NOME?><br />
+    Período: <?param.get(0)?> / <?param.get(1)?>
+  </p>
+  
+<?band2:band1?>
+  <h2><br />Lançamentos diários</h2>
+  <table>
+    <tr>
+      <td class='tit'>Dia</td>
+      <td class='tit'>Operação</td>
+      <td class='tit'>Descrição</td>
+      <td class='tit vlr'>Referência</td>
+      <td class='tit'>Tipo</td>
+      <td class='tit vlr'>Valor</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band3:band2?>
+  <?band.dst(Diario)?>
+    <tr>
+      <td ><?Diario.LCD_DIA?></td>
+      <td ><?Diario.OPR_DESCRICAO?></td>
+      <td ><?Diario.LCD_DESCRICAO?></td>
+      <td class='vlr'><?$v.mov(Diario.LCD_REFERENCIA); $v?></td>
+      <td ><?Diario.OPR_TIPO?></td>
+      <td class='vlr'><?$v.mov(Diario.LCD_VALOR); $v.format("#,##0.00")?></td>
+    </tr>
+<?endband2?>
+  </table>
+  
+<?band4:band1?>  
+  <h2><br />Resumo do Mês</h2>
+  <table>
+    <tr>
+      <td class='tit'>Operação</td>
+      <td class='tit vlr'>Referência</td>
+      <td class='tit'>Tipo</td>
+      <td class='tit vlr'>Valor</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band5:band4?>
+  <?band.dst(Resumo)?>
+    <tr>
+      <td ><?Resumo.OPR_DESCRICAO?></td>
+      <td class='vlr'><?$v.mov(Resumo.LNC_REFERENCIA); $v?></td>
+      <td ><?Resumo.OPR_TIPO?></td>
+      <td class='vlr'><?$v.mov(Resumo.LNC_VALOR); $v.format("#,##0.00")?></td>
+    </tr>
+<?endband4?>
+  </table>
+  
+<?band6:band1?>
+  <h2><br />Total</h2>
+  <table>    
+  <!-- Conteúdo do Relatório -->
+<?band7:band6?>
+  <?
+    band.dst(Total);    
+  ?>
+    <tr>
+      <td class='tit'><?$v.mov(Total.OPR_TIPO); $v.equals("C", "REMUNERAÇÃO TOTAL", "DESCONTO TOTAIS"); $v;?></td>
+      <td class='tit vlr'><?
+             $ac.mov($c);
+             $c.mov(Total.OPR_TIPO); $c.equals("C", Total.VALOR, $ac);
+             
+             $ad.mov($d);
+             $d.mov(Total.OPR_TIPO); $d.equals("D", Total.VALOR, $ad);
+             
+             $v.mov(Total.VALOR); $v.format("#,##0.00")?>
+      </td>
+    </tr>
+<?endband6?>
+    <tr>
+      <td class='tit'>REMUNERAÇÃO LÍQUIDA</td>
+      <td class='tit vlr'><?$l.mov($c); $l.sub($d); $l.format("#,##0.00")?></td>
+    </tr>
+  </table>
+  
+<?endband1?>
+</div>

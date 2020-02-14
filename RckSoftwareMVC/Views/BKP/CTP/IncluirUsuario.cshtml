@@ -1,0 +1,12 @@
+﻿@model RckSoftwareMVC.CTP_USR_USERS
+@{
+    ViewBag.Title = "Incluir Usuario";
+}
+
+<h2>Incluir Usuario</h2>
+<form action="/CTP/IncluirUsuario" method="post">
+<input type="hidden" name="USR_CODIGO" value="@(Model.USR_CODIGO)" />
+<input type="text" name="USR_NOME" placeholder="Nome" value="@(Model.USR_NOME)" /><br />
+<button type="submit">Salvar</button><br />
+<a href="/CTP/ListarUsuario">Voltar</a>
+</form>

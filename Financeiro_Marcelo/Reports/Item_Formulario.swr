@@ -1,0 +1,79 @@
+<?   
+  //param.add("Codigo:", int);
+  //param.show();
+  
+  Item.new("Database");
+  Form.new("Database");
+  
+  Item.sql(
+      " select CAT_DESCRICAO, PLN_DESCRICAO, FNI_DESCRICAO, FNI_QTDE, FNI_VALOR_TOTAL, FNI_VALOR_UNITARIO from FNI_FINANCEIRO_ITEM 
+        INNER JOIN FIN_FINANCEIRO ON FIN_CODIGO = FNI_FIN_CODIGO
+        INNER JOIN CAT_CATEGORIAS ON CAT_CODIGO = FIN_CAT_CODIGO
+        INNER JOIN PLN_PLANOCONTAS ON PLN_CODIGO = FIN_PLN_CODIGO
+        WHERE FIN_FRM_CODIGO = {0}
+        ORDER BY CAT_CODIGO, PLN_CODIGO, FNI_DESCRICAO"
+  );
+  
+  Form.sql(
+      " select FRM_NUMERO, FRM_DATA, EMP_DESCRICAO 
+        from FRM_FORMULARIOS 
+        INNER JOIN EMP_EMPRESAS ON EMP_CODIGO = FRM_EMP_CODIGO
+        WHERE FRM_CODIGO = {0}")
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; text-decoration:underline; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Items - Formulário</h1>
+  <p>
+    Emissao : <?sys.now()?><br />
+    Número : <?Form.FRM_NUMERO?><br />
+    Data entrada : <?Form.FRM_DATA?><br />
+    Empresa : <?Form.EMP_DESCRICAO?><br />
+  </p>
+  <table>
+    <tr>
+      <td class='tit'>Categoria</td>
+      <td class='tit'>Plano</td>
+      <td class='tit'>Descrição</td>
+      <td class='tit vlr'>Qtde</td>
+      <td class='tit vlr'>Valor Unitário</td>
+      <td class='tit vlr'>Total</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2:band1?>
+  <?band.dst(Item);?>
+    <tr>
+      <td ><?Item.CAT_DESCRICAO?></td>
+      <td ><?Item.PLN_DESCRICAO?></td>
+      <td ><?Item.FNI_DESCRICAO?></td>
+      <td class='vlr'><?Item.FNI_QTDE?></td>
+      <td class='vlr'><?Item.FNI_VALOR_UNITARIO?></td>
+      <td class='vlr'><?Item.FNI_VALOR_TOTAL?></td>
+    </tr>
+<?endband1?>
+  </table>
+</div>

@@ -1,0 +1,282 @@
+body{
+  font-family:Helvetica, tahoma, sans-serif, arial;
+  background-color:#fff;
+  margin:0;
+  padding:0;
+}
+
+p, label, span, th, td{
+  font-family:Segoe UI, Helvetica, tahoma, sans-serif, arial;
+  font-size:10pt;
+}
+
+a{
+  color:#359;
+  text-decoration:none;
+}
+
+a:hover{
+  color:#359;
+  text-decoration:underline;
+}
+
+
+#page
+{
+  display:inline-block;
+  margin:0;
+  padding:0;
+  min-width:100%;  
+}
+
+#title{
+  height:150px;
+  background-color:#359;
+  margin:0;
+  padding:0;
+  min-width:1000px;
+}
+
+#title .logo{
+  margin-top:21px;
+}
+
+#menu{
+  position:absolute;
+  top:60px;
+  left:250px;
+  width:700px;
+  height:100px;  
+}
+
+#menu ul
+{
+  display: block;
+}
+
+#menu li
+{
+  list-style-type: none;
+  float: right;
+  text-align: right;
+  display: block;
+  font-family: Helvetica, tahoma, sans-serif, arial;
+  font-size: 14px;
+  text-decoration: none;
+  width: 10px auto;     
+}
+
+#menu li a{
+  text-decoration: none;
+  padding:40px 20px 35px 20px;
+  color:#fff;
+  font-size: 14px;
+  text-decoration: none;
+  font-family: Helvetica, tahoma, sans-serif, arial;
+}
+
+#menu li a:hover{
+  background-color:#68c;
+}
+
+#main{
+  background-color:#fff;
+  margin-bottom: 50px;
+}
+
+#main #header{
+  border-bottom:solid 1px #ccc;
+}
+
+#main #header h1{
+  color:#999;
+  margin:60px 0 5px 0;
+  font-family:Segoe WP SemiLight, Helvetica, tahoma, sans-serif, arial;
+  font-size:20pt;
+  font-weight: normal;
+}
+
+#footer_index {
+  position: absolute;
+  width:100%;
+  top:100%;
+  margin-top: -40px;
+  clear: both;
+  line-height:40px;
+  background-color: #3b5998;
+  color:#fff;
+}
+
+#footer {
+  position: relative;
+  width:100%;
+  top:100%;
+  margin-top: -40px;
+  clear: both;
+  line-height:40px;
+  background-color: #3b5998;
+  color:#fff;
+}
+
+.inner {
+  position:relative;
+  padding:0 20px;
+  width:960px;
+  margin:0 auto;
+  clear:both;
+}
+
+/********************************* MESSAGE *********************************************/
+.message{
+  color:#fff;
+  padding:20px 10px;
+}
+
+.error{
+  background-color:#f66;
+}
+
+.warning{
+  background-color:#ca3;
+}
+
+.info{
+  background-color:#359;
+}
+
+.success{
+  background-color:#395;
+}
+
+/********************************* WIDGET **********************************************/
+.widget{
+  float:left;
+  padding:20px;
+}
+
+.widget .content .s1 { width:60px; }
+.widget .content .s2 { width:120px; }
+.widget .content .s3 { width:180px; }
+.widget .content .s4 { width:300px; }
+.widget .content .s5 { width:480px; }
+.widget .content .s6 { width:780px; }
+
+.widget .content .p10 { width:10%; }
+.widget .content .p20 { width:20%; }
+.widget .content .p30 { width:30%; }
+.widget .content .p50 { width:50%; }
+.widget .content .p80 { width:80%; }
+.widget .content .p100 { width:100%; }
+
+.widget .header h2{
+  color:#f83;
+  margin:10px 0 5px 0;
+  font-family:Segoe WP SemiLight, Helvetica, tahoma, sans-serif, arial;
+  font-size:16pt;
+  font-weight: normal;
+}
+
+.widget .content{
+}
+
+.widget .footer{
+  padding:20px 0;
+}
+
+.widget label{
+  color:#777;
+}
+
+.widget input{
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border:solid 1px #aaa;
+  background-color:#ddd;
+  padding:8px 10px;
+}
+
+.widget select{
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border:solid 1px #aaa;
+  padding:8px 10px;
+  background: url("../img/select.jpg") no-repeat right #ddd;
+  -webkit-appearance: none;
+}
+
+.widget input:focus, select:focus{
+  background-color:#efefef;
+  border:solid 1px #ddd; 
+}
+
+.widget input[type=submit], input[type=button]{
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding:10px 20px;
+  border:0;
+  background-color:#359;
+  color:#fff;
+  font-weight: normal;
+  font-family:Segoe UI, Helvetica, tahoma, sans-serif, arial;
+  font-size:12pt;
+  
+}
+
+.widget input[type=submit]:hover, input[type=button]:hover{
+  background-color:#68c;
+}
+
+.widget button:active{
+  background-color:#359;
+}
+
+.widget table { 
+  margin:0;
+  border-spacing:0;
+  border-collapse:collapse;
+}
+
+.widget tr{
+  background-color:#ddd;
+}
+
+.widget tr:hover{
+  background-color:#eee;
+}
+
+.widget th{
+  background-color:#999;
+  margin:0;
+  padding:8px 10px;
+  color:#fff;
+  font-weight: normal;
+  border:solid 1px #aaa;
+}
+
+.widget td{
+  margin:0;
+  padding:8px 10px;
+  border:solid 1px #aaa;
+}
+
+.widget .center
+{
+  text-align:center;
+}
+
+.widget .edit{
+  background-image:url("../img/edit.png");
+  display: inline-block;
+  width:16px;
+  height:16px;
+}
+
+.widget .remove{
+  background-image:url("../img/remove.png");
+  display: inline-block;
+  width:16px;
+  height:16px;
+}

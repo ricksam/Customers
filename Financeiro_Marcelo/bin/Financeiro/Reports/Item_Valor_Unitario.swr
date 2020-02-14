@@ -1,0 +1,80 @@
+<?
+  param.add("Data de:", date, sys.now());
+  param.add("Data ate:", date, sys.now());
+  param.show();
+  
+  D.new("Database");
+  Unt.new("Database");
+  
+  D.sql(
+      "select CAT_DESCRICAO,PLN_DESCRICAO, FNI_DESCRICAO from FNI_FINANCEIRO_ITEM
+      INNER JOIN FIN_FINANCEIRO ON FIN_CODIGO = FNI_FIN_CODIGO
+      INNER JOIN CAT_CATEGORIAS ON CAT_CODIGO = FIN_CAT_CODIGO
+      INNER JOIN PLN_PLANOCONTAS ON PLN_CODIGO = FIN_PLN_CODIGO
+      WHERE FIN_DATA >= {0} AND FIN_DATA <= {1}
+      GROUP BY CAT_DESCRICAO,PLN_DESCRICAO, FNI_DESCRICAO
+      ORDER BY FIN_CAT_CODIGO, FIN_PLN_CODIGO, FNI_DESCRICAO"
+  );
+  
+  $sql = "select FIN_DATA, FNI_VALOR_UNITARIO 
+      from FNI_FINANCEIRO_ITEM 
+      INNER JOIN FIN_FINANCEIRO ON FIN_CODIGO = FNI_FIN_CODIGO
+      where fni_descricao = {0}
+      ORDER BY FNI_CODIGO DESC"
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; text-decoration:underline; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Item - Último Valor Unitário</h1>
+  <p>Emissao : <?sys.now()?></p>
+  <table>
+    <tr>
+      <td class='tit'>Categoria</td>
+      <td class='tit'>Plano</td>
+      <td class='tit'>Descrição</td>
+      <td class='tit'>Última Entrada</td>
+      <td class='tit vlr'>Valor Unitário</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2:band1?>
+  <?
+    band.dst(D);
+    
+    strparam.clear();
+    strparam.add(D.FNI_DESCRICAO, string);
+    Unt.sql($sql);
+  ?>
+    <tr>
+      <td ><?D.CAT_DESCRICAO?></td>
+      <td ><?D.PLN_DESCRICAO?></td>
+      <td ><?D.FNI_DESCRICAO?></td>
+      <td ><?$v.mov(Unt.FIN_DATA); $v.format("dd/MM/yyyy")?></td>
+      <td class='vlr'><?Unt.FNI_VALOR_UNITARIO?></td>
+    </tr>
+<?endband1?>
+  </table>
+</div>

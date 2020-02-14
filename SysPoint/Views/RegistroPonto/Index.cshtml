@@ -1,0 +1,66 @@
+﻿@model List<SysPoint.Models.RegistroPonto>
+@{
+    Layout = "~/Views/Shared/_LayoutNav.cshtml";
+}
+<div class="container">
+    <div class="page-header">
+        <h1>@ViewBag.Title</h1>
+    </div>
+
+    <form id="form_filtro" action="/RegistroPonto/Index" method="get">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>Data</label>
+                    @Html.Action("Data", "RegistroPonto", new { id = "Data", name = "Data", selected = ViewBag.Data, onchange = "DoSubmit()" })
+                </div>
+
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>Local</label>
+                    @Html.Action("Local", "RegistroPonto", new { id = "Local", name = "Local", selected = ViewBag.Local, onchange = "DoSubmit()" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>Colaborador</label>
+                    @Html.Action("Colaborador", "RegistroPonto", new { id = "Colaborador", name = "Colaborador", selected = ViewBag.Colaborador, onchange = "DoSubmit()" })
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            string Latitude = item.Latitude.ToString("0.0000000").Replace(",", ".");
+            string Longitude = item.Longitude.ToString("0.0000000").Replace(",", ".");
+            <div class="col-sm-4 form-group">
+                <div class="card bg-secondary">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <img style="width:100%" src="/Foto/Index/@(item.Id_Foto)" />
+                            </div>
+                            <div class="col-sm-6">
+                                <h3>@(item.Colaborador.Nome)</h3>
+                                <h6>@(item.Registro.ToString("dd/MM/yy HH:mm"))</h6>
+                                <h6><a target="_blank" href="https://maps.google.com/maps?&z=15&q=@(Latitude)+@(Longitude)&ll=@(Latitude)+@(Longitude)"><i class="fa fa-map-marker"></i> @(Latitude) <br /> @(Longitude)</a></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        function DoSubmit() {
+            document.forms['form_filtro'].submit();
+        }
+    </script>
+}

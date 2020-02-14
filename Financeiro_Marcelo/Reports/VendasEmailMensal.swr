@@ -1,0 +1,103 @@
+<?
+  D.new("Database"); 
+  D.sql(
+      "SELECT 
+        VDA_EMISSAO,
+        EMP_DESCRICAO AS EMPRESA,
+        SUM(VDA_CUPONS) AS VDA_CUPONS,
+        SUM(VDA_TOTAL) AS VDA_TOTAL
+      FROM VDA_VENDA
+      INNER JOIN EMP_EMPRESAS ON EMP_CNPJ = VDA_CNPJ
+      WHERE 
+        (VDA_FRM_CODIGO IS NULL OR VDA_FRM_CODIGO = 0)
+        AND
+        (VDA_COD_OPERADOR IS NOT NULL AND VDA_COD_OPERADOR <> 0)
+        AND 
+        EXTRACT(MONTH FROM VDA_EMISSAO) = {0}
+        AND 
+        EXTRACT(YEAR FROM VDA_EMISSAO) = {1}
+        AND 
+        EXTRACT(DAY FROM VDA_EMISSAO) <> {2}
+      GROUP BY 
+        VDA_EMISSAO,          
+        VDA_EMPRESA,         
+        VDA_CNPJ
+      ORDER BY           
+        VDA_EMISSAO,
+        VDA_EMPRESA,
+        VDA_CNPJ"
+  );
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; font-weight:normal}
+    h3{font-family:Arial; font-size:11pt; color:#365f91; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom;}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Relatório de Vendas</h1>
+  <p>Emissao : <?sys.now()?></p>
+  <table>
+    <tr>
+      <td class='tit cen'>Emissão</td>
+      <td class='tit'>Empresa</td>
+      <?$T_VDA_CUPONS.mov(0)?>
+      <td class='tit vlr'>Cupons</td>
+      <?$T_VDA_TOTAL.mov(0)?>
+      <td class='tit vlr'>Total</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2:band1?>
+  <?band.dst(D)?>
+    <?
+      $v.mov(D.VDA_EMISSAO); 
+      
+      $At.mov("<tr><td><h3><br /><br />");
+      $At.append($v.format("dd/MM/yy")); 
+      $At.append("</h3></td></tr>");
+      
+      $Display.mov($v);
+      $Display.equals($DtAnt, "", $At);
+      //$Ant.mov($At);
+      $DtAnt.mov($v);
+      $Display;
+    ?>
+    <tr>
+      <td class='cen'></td>
+      <td ><?D.EMPRESA?></td>
+      <?$T_VDA_CUPONS.add(D.VDA_CUPONS)?>
+      <td class='vlr'><?D.VDA_CUPONS?></td>
+      <?$T_VDA_TOTAL.add(D.VDA_TOTAL)?>
+      <td class='vlr'><?$v.mov(D.VDA_TOTAL); $v.format("#,##0.00")?></td>
+    </tr>
+<?endband1?>
+  <!-- Rodapé do Relatório -->
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+      <td class='sum' colspan='2'>TOTAL</td>
+      <td class='sum vlr'><?$T_VDA_CUPONS?></td>
+      <td class='sum vlr'><?$T_VDA_TOTAL.format("#,##0.00")?></td>
+    </tr>
+  </table>
+</div>

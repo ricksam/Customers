@@ -1,0 +1,13 @@
+﻿@model List<SysPoint.Models.Empresa>
+@{
+    Layout = null;
+}
+
+<select id="@(ViewBag.Id)" name="@(ViewBag.Name)" onchange="@(ViewBag.OnChenge)" class="form-control" required>
+    <option value="@(ViewBag.DafeultValue)">[@(ViewBag.DafeultItem)]</option>
+    @foreach (var item in Model)
+    {
+        <option value="@(item.Id)" @(item.Id.ToString()==ViewBag.SelectedItem?"selected":"")>@item.Nome</option>
+    }
+</select>
+

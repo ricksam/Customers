@@ -1,0 +1,236 @@
+<? 
+  $sqlEmpresa = "select * from emp_empresas";  
+  param.add("Data De:", date, sys.date());
+  param.add("Data Ate:", date, sys.date());  
+  param.add("Empresa", int, "Database", $sqlEmpresa, "EMP_CODIGO", "EMP_DESCRICAO");
+  param.show();
+    
+  CatRec.new("Database");
+  CatDesp.new("Database");
+  Pln.new("Database");
+  Fin.new("Database");  
+  Emp.new("Database");
+  
+  Emp.sql("select * from emp_empresas where EMP_CODIGO = {2}");
+  
+  $DataDe.mov(param.get(0));
+  $DataAte.mov(param.get(1));
+  $CodEmpresa.mov(param.get(2));
+  $Empresa.mov(Emp.EMP_DESCRICAO);
+       
+  CatDesp.sql(
+    "
+      SELECT CAT_CODIGO, CAT_DESCRICAO FROM FIN_FINANCEIRO
+      INNER JOIN CAT_CATEGORIAS ON CAT_CODIGO = FIN_CAT_CODIGO AND CAT_TIPO = 'D'      
+      WHERE
+        FIN_DATA >= {0} AND 
+        FIN_DATA <= {1} AND
+        FIN_EMP_CODIGO = {2} 		
+      GROUP BY
+        CAT_CODIGO, CAT_DESCRICAO
+    "
+  ); 
+      
+  $sqlpln = 
+      "
+        SELECT FIN_CAT_CODIGO, PLN_CODIGO, PLN_DESCRICAO, SUM(FIN_VALOR) AS TOTAL FROM FIN_FINANCEIRO
+        INNER JOIN PLN_PLANOCONTAS ON PLN_CODIGO = FIN_PLN_CODIGO        
+        WHERE
+          FIN_DATA >= {0} AND 
+          FIN_DATA <= {1} AND  
+          FIN_EMP_CODIGO = {2} AND     
+          PLN_CAT_CODIGO = {3}  
+        GROUP BY
+          FIN_CAT_CODIGO, PLN_CODIGO, PLN_DESCRICAO
+		ORDER 
+		  BY PLN_PRIORIDADE, FIN_PLN_CODIGO
+      ";
+      
+  $sqlfin = 
+      "
+        SELECT FIN_DATA, FIN_DESCRICAO, FRM_NUMERO,CPG_DOCUMENTO, FIN_VALOR FROM FIN_FINANCEIRO
+        LEFT OUTER JOIN CPG_CONTAS_PAGAR ON CPG_FIN_CODIGO = FIN_CODIGO
+        LEFT OUTER JOIN FRM_FORMULARIOS ON FRM_CODIGO = FIN_FRM_CODIGO
+        WHERE
+          FIN_DATA >= {0} AND 
+          FIN_DATA <= {1} AND  
+          FIN_EMP_CODIGO = {2} AND     
+          FIN_CAT_CODIGO = {3} AND    
+          FIN_PLN_CODIGO = {4}
+      ";    
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1 { font-family:Arial; font-size:14pt; color:#365f91; font-weight:normal }
+    body { font-family:Arial; font-size:8pt } 
+    .cabecalho
+    {
+      font-size:10pt; 
+      line-heght:20px; 
+      padding:10px 0px; 
+      font-weight:bold; 
+      float:left;
+    }
+    .tipo { width:260px; }
+	  .empresa { width:90px; text-align:right; }
+	  .categoria { font-size:10pt; line-heght:20px; padding:10px 30px; font-weight:bold }    
+    .plano 
+    { 
+      float:left;
+      font-size:10pt; 
+      line-height:20px; 
+      margin-left:60px; 
+      width:200px;
+	    border-bottom:dotted 1px #000;
+    }
+    
+    .totplano
+    {
+      float:left;
+      font-size:10pt; 
+      line-height:20px; 
+      width:90px;
+      text-align:right;
+	    border-bottom:dotted 1px #000;
+    }
+    .lanc 
+    { 
+      float:left;
+      font-size:10pt; 
+      line-height:20px; 
+      margin-left:60px; 
+      width:120px;
+	    border-bottom:dotted 1px #000;
+    }
+    .totlanc
+    {
+      float:left;
+      font-size:10pt; 
+      line-height:20px; 
+      width:90px;
+      text-align:right;
+	    border-bottom:dotted 1px #000;
+    }
+    .tit{ font-weight:bold }
+    .total{ font-weight:bold }    
+	  .subtotal{ padding:10px 0px; margin-left:30px; width:225px; }
+    .titulo{ float:left; }
+    .clear{ clear:both }
+    .divajax{ border:dotted 1px #ccc; display:none; background-color:#efefef; }
+  </style>
+  <script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    
+  </script>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Total por plano de contas - Data de Entrada</h1>
+  <p>
+    Filtro: Data de <?$DataDe.format("dd/MM/yyyy")?> ate <?$DataAte.format("dd/MM/yyyy")?><br />
+	  Empresa: <?$Empresa?><br />
+    Emissao : <?sys.now()?>
+  </p>
+    
+<!-- DESPESAS -->
+<?band9:band1?>
+  <div class="cabecalho tipo">Despesas</div>
+  <br class="clear" />
+ 
+<?band10:band1?>
+  <?band.dst(CatDesp)?>
+  <?
+    strparam.clear();
+    strparam.add($DataDe, date);
+    strparam.add($DataAte, date);    
+	  strparam.add($CodEmpresa, int);
+    strparam.add(CatDesp.CAT_CODIGO, int);    
+    Pln.sql($sqlpln);
+	$TotCatDesp.mov(0);
+  ?>
+  <div class="categoria"><?CatDesp.CAT_DESCRICAO?></div>  
+
+<?band11:band10?>
+  <?band.dst(Pln);?>
+  <?  
+    strparam.clear();
+    strparam.add($DataDe, date);
+    strparam.add($DataAte, date);    
+	  strparam.add($CodEmpresa, int);
+    strparam.add(CatDesp.CAT_CODIGO, int);
+    strparam.add(Pln.PLN_CODIGO, int);    
+    Fin.sql($sqlfin);
+  ?>
+  <script>
+    $(document).ready(function(){
+      $("#lnk<?Pln.PLN_CODIGO?>_ocultar").click(function(event){
+        event.preventDefault();
+        $("#dv<?Pln.PLN_CODIGO?>").hide("slow");
+      });
+     
+      $("#lnk<?Pln.PLN_CODIGO?>_mostrar").click(function(event){
+        event.preventDefault();
+        $("#dv<?Pln.PLN_CODIGO?>").show(1000);
+      });
+    });
+  </script>
+  <div class="plano">
+    <a href="#" id="lnk<?Pln.PLN_CODIGO?>_mostrar"><?Pln.PLN_DESCRICAO?>&nbsp;</a>
+  </div>
+  <div class="totplano"><?$v.mov(Pln.TOTAL); $TotCatDesp.add($v); $v.format("#,##0.00")?>&nbsp;</div>
+  <br class="clear" />  
+  
+<!-- novo begin -->
+<div id="dv<?Pln.PLN_CODIGO?>" class="divajax">  
+  <a href="#" id="lnk<?Pln.PLN_CODIGO?>_ocultar">ocultar</a>
+  <br class="clear" />
+  <div class='tit lanc'>Data</div>
+  <div class='tit lanc'>Descrição</div>
+  <div class='tit lanc'>Formulario</div>
+  <div class='tit lanc'>Documento</div>
+  <div class='tit totlanc'>Valor</div>
+  <br class="clear" />
+<?band12:band11?>
+  <?band.dst(Fin);?>
+    <div class='lanc'><?$v.mov(Fin.FIN_DATA); $v.format("dd/MM/yyyy")?>&nbsp;</div>
+    <div class='lanc'><?Fin.FIN_DESCRICAO?>&nbsp;</div>
+    <div class='lanc'><?Fin.FRM_NUMERO?>&nbsp;</div>
+    <div class='lanc'><?Fin.CPG_DOCUMENTO?>&nbsp;</div>
+    <div class='totlanc'><?$v.mov(Fin.FIN_VALOR); $v.format("#,##0.00")?>&nbsp;</div>
+    <br class="clear" />
+    
+<?endband11?>   
+    <br class="clear" />  <br class="clear" />  <br class="clear" />  
+  </div> 
+<!-- novo end -->
+
+
+  
+<?endband10?>
+  <div class="cabecalho subtotal">Total</div>
+  <div class="cabecalho empresa"><?$TotDesp.add($TotCatDesp); $TotCatDesp.format("#,##0.00")?></div>
+  <br class="clear" />
+  
+<?band13:band1?>
+  <div class="cabecalho tipo">Total de Despesas</div>
+  <div class="cabecalho empresa"><?$TotDesp.format("#,##0.00")?></div>
+  <br class="clear" />
+  <div class="cabecalho tipo">Total (Sem as Mercadorias)</div>
+  <div class="cabecalho empresa"><?$TotDesp.sub($TotCatDesp); $TotDesp.format("#,##0.00")?></div>
+  <br class="clear" />
+  
+<?endband1?>
+</div>

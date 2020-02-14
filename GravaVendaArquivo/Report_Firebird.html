@@ -1,0 +1,99 @@
+<?
+  D.new("Database"); 
+  D.sql(
+      "select 
+        emp.cnpj as cnpj, 
+        emp.fantasia as empresa, 
+        vda.dtemissao as emissao,
+        min(vda.hremissao) as inicio, 
+        oper.codoper as cod_operador, 
+        oper.nome as operador, 
+        vda.codpdv,
+        vda.codmovimento,
+        min(vda.coo) as cupom_inicial, 
+        count(vda.idvdapdv) as cupons,
+        sum(vda.vlrtotal) as total 
+      from 
+        vdapdv vda, 
+        empresa emp 
+      inner join cdoperadores oper on 
+        oper.codoper = vda.codoper 
+      where
+        vda.dtemissao >= current_date-60 and 
+        vda.dtemissao <= current_date and 
+        vda.codmovimento = 100 and
+        cancelado <> 'S' 
+      group by 
+        emp.cnpj, 
+        emp.fantasia, 
+        vda.dtemissao,
+        vda.codpdv,
+        vda.codmovimento, 
+        oper.codoper, 
+        oper.nome
+      order by vda.dtemissao, vda.codpdv, vda.coo"
+  );
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+      height:100%;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial, Verdana; font-size:16pt; color:#367;}
+    p{font-family:Verdana, Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Arial, Verdana;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{font-weight:bold; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{font-weight:bold;border-top:1px solid #000; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Sql_Query</h1>
+  <p>Emissao : <?sys.now()?></p>
+  <table>
+    <tr>
+      <td class='tit'>CNPJ</td>
+      <td class='tit'>EMPRESA</td>
+      <td class='tit cen'>EMISSAO</td>
+      <td class='tit cen'>INICIO</td>
+      <td class='tit vlr'>COD_OPERADOR</td>
+      <td class='tit'>OPERADOR</td>
+      <td class='tit vlr'>CODPDV</td>
+      <td class='tit vlr'>CODMOVIMENTO</td>
+      <td class='tit vlr'>CUPOM_INICIAL</td>
+      <td class='tit vlr'>CUPONS</td>
+      <td class='tit vlr'>TOTAL</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2?>
+  <?band.dst(D)?>
+    <tr>
+      <td ><?D.CNPJ?></td>
+      <td ><?D.EMPRESA?></td>
+      <td class='cen'><?D.EMISSAO?></td>
+      <td class='cen'><?D.INICIO?></td>
+      <td class='vlr'><?D.COD_OPERADOR?></td>
+      <td ><?D.OPERADOR?></td>
+      <td class='vlr'><?D.CODPDV?></td>
+      <td class='vlr'><?D.CODMOVIMENTO?></td>
+      <td class='vlr'><?D.CUPOM_INICIAL?></td>
+      <td class='vlr'><?D.CUPONS?></td>
+      <td class='vlr'><?D.TOTAL?></td>
+    </tr>
+<?endband1?>
+  </table>
+</div>

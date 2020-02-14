@@ -1,0 +1,33 @@
+﻿@model RckSoftwareMVC.CTP_USR_USERS[]
+@{
+  ViewBag.Title = "Listar Usuario";
+}
+<h2>
+  ListarUsuario</h2>
+<table>
+  <tr>
+    <th>
+      Usuário
+    </th>
+    <th>
+    </th>
+  </tr>
+  @foreach (var usr in Model)
+  {
+    <tr>
+      <td>@usr.USR_NOME
+      </td>
+      <td>
+        <a href="/CTP/RemoverUsuario/@(usr.USR_CODIGO)">
+          <img width="32" height="32" alt="remover" src="../../Templates/CTP/img/remove.png" />
+        </a>
+      </td>
+    </tr>
+  }
+</table>
+<form action="/CTP/IncluirUsuario" method="get">
+<button type="submit" class="s4">
+  Incluir Usuario</button>
+</form>
+<br />
+<a href="/CTP/LogOff">Sair</a> 

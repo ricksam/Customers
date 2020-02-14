@@ -1,0 +1,16 @@
+﻿@model RckSoftwareMVC.Models.SysCam.DataImage[]
+@{
+    Layout = null;
+    string ids = string.Format("[{0}]", String.Join(",", Model.Select(i => i.id.ToString()).ToArray()));
+    string images = string.Format("[{0}]", String.Join(",", Model.Select(i => string.Format("'{0}'",i.image.ToString())).ToArray()));
+}
+
+<h3>Imagens</h3>
+<p>ids: @(ids)</p>
+<label id="labelid"></label>
+<img id="image" />
+
+<script type="text/javascript">
+    list = @Html.Raw(images);
+</script>
+

@@ -1,0 +1,52 @@
+﻿@model RckSoftwareMVC.SOCIAL_NETWORK
+@{
+    ViewBag.Title = "Editar";
+}
+
+<h2>Editar</h2>
+
+<form action="/SNK/Editar" method="post">
+  <p>@ViewBag.msg</p>
+  <input type="hidden" name="ID" value="@(Model.ID)" />
+
+  <p>
+  <label>NAME</label><br />
+  <input type="text" name="NAME" value="@(Model.NAME)" />
+  </p>
+
+  <p>
+  <label>CLIENT_ID</label><br />
+  <input type="text" name="CLIENT_ID" value="@(Model.CLIENT_ID)" />
+  </p>
+
+  <p>
+  <label>CLIENT_SECRET</label><br />
+  <input class="s4" type="text" name="CLIENT_SECRET" value="@(Model.CLIENT_SECRET)" />
+  </p>
+
+  <p>
+  <label>REDIRECT_URI</label><br />
+  <input class="s4" type="text" name="REDIRECT_URI" value="@(Model.REDIRECT_URI)" />
+  </p>
+
+  <p>
+  <label>SCOPE</label><br />
+  <textarea rows="5" cols="40" name="SCOPE">@(Model.SCOPE)</textarea>
+  </p>
+
+  <p>
+  <label>CALLBACK</label><br />
+  <input class="s4" type="text" name="CALLBACK" value="@(Model.CALLBACK)" />
+  </p>
+
+  <p>
+  <button type="submit">Gravar</button>
+  <a href="/SNK/List">Voltar</a>
+  </p>
+</form>
+
+<script type="text/javascript">
+  //$(document).ready(function () {
+    //$(".telefone").mask("(99)?999999999");
+  //});
+</script>

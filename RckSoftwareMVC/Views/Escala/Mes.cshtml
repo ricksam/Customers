@@ -1,0 +1,115 @@
+﻿@model RckSoftwareMVC.Controllers.EscalaMes
+@{
+    Layout = null;
+    bool LastDay = false;
+
+    var classSmMd = "col-sm-6 col-md-6";
+
+    if (Model.DayOfWeeks.Count == 1) {
+        classSmMd = "col-sm-2 col-md-2";
+    }
+
+    if (Model.DayOfWeeks.Count == 2)
+    {
+        classSmMd = "col-sm-3 col-md-3";
+    }
+
+    if (Model.DayOfWeeks.Count == 3)
+    {
+        classSmMd = "col-sm-4 col-md-4";
+    }
+}
+
+<style>
+    .divdia {
+        float: left;
+    }
+</style>
+
+<div class="@(classSmMd)">
+
+    <h6 class="text-center">@Model.NomeMes.ToUpper()</h6>
+    <table class="table table-bordered">
+        <tr>
+            @foreach (var item in Model.DayOfWeeks)
+            {
+                if (item == DayOfWeek.Sunday)
+                {
+                    <th>Domingo</th>
+                }
+                if (item == DayOfWeek.Monday)
+                {
+                    <th>Segunda</th>
+                }
+                if (item == DayOfWeek.Tuesday)
+                {
+                    <th>Terça</th>
+                }
+                if (item == DayOfWeek.Wednesday)
+                {
+                    <th>Quarta</th>
+                }
+                if (item == DayOfWeek.Thursday)
+                {
+                    <th>Quinta</th>
+                }
+                if (item == DayOfWeek.Friday)
+                {
+                    <th>Sexta</th>
+                }
+                if (item == DayOfWeek.Saturday)
+                {
+                    <th>Sábado</th>
+                }
+            }
+        </tr>
+        <tr>
+            @for (int i = 0; i < Model.OffSet; i++)
+            {
+                <td></td>
+            }
+
+            @for (int i = 0; i < Model.DiasEscala.Count; i++)
+            {
+                var item = Model.DiasEscala[i];
+
+                LastDay = (i + 1) == Model.DiasEscala.Count;
+
+                <td>
+
+                    <div class="divdia"><b>@item.Data.Day</b>&nbsp;&nbsp;&nbsp;</div>
+                    <div class="divdia">
+                        @if (item.Conjunto.MeiaHora == item.Conjunto.Culto)
+                        {
+                            @item.Conjunto.Culto
+                        }
+                        else
+                        {
+                            @item.Conjunto.MeiaHora
+                            <br /> @item.Conjunto.Culto
+                        }
+                    </div>
+
+
+                </td>
+                Model.OffSet++;
+                
+                if (Model.OffSet == Model.DayOfWeeks.Count && !LastDay)
+                {
+                    Model.OffSet = 0;
+
+                    @Html.Raw("</tr><tr>")
+
+                }
+            }
+
+            
+
+            @for (int i = Model.OffSet; i < Model.DayOfWeeks.Count; i++)
+            {
+                <td></td>
+            }
+        </tr>
+    </table>
+
+</div>

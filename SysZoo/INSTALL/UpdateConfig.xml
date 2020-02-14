@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<UpdateConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <FileName>C:\Users\Aatag\AppData\Local\aaTag.Update\New_UpdateConfig.xml</FileName>
+  <SerializeFormat>Xml</SerializeFormat>
+  <LinkVersao>http://www.ricksam.esy.es/app/Install_SysZoo.html</LinkVersao>
+  <LinkUpdate>http://www.ricksam.esy.es/app/Install_SysZoo-{version}.exe.zip</LinkUpdate>
+  <AppLocal>{pf}\RCK Software\SysZoo\SysZoo.exe</AppLocal>
+  <AppParams></AppParams>
+  <AppText>SysZoo</AppText>
+  <AppSplash>{localappdata}\SysZoo\Splash.jpg</AppSplash>
+  <InitialTime>1</InitialTime>
+</UpdateConfig>

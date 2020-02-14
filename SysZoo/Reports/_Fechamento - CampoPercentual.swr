@@ -1,0 +1,161 @@
+<?
+  $sql_movimento_param = "SELECT DATE_FORMAT(VTK_DATA, '%d/%m/%Y') AS DATA FROM SZO_VTK_VENDA_TICKETS
+    WHERE VTK_IDENTIFICACAO IS NOT NULL AND VTK_IDENTIFICACAO NOT IN ('RICKSAM', 'ATLANTIS')
+    GROUP BY DATE_FORMAT(VTK_DATA, '%d/%m/%Y')
+    ORDER BY VTK_DATA DESC";
+      
+  $sql_movimento = "SELECT DATE_FORMAT(VTK_DATA, '%Y-%m-%d') AS DATA FROM SZO_VTK_VENDA_TICKETS
+        WHERE VTK_IDENTIFICACAO IS NOT NULL AND VTK_IDENTIFICACAO NOT IN ('RICKSAM', 'ATLANTIS')
+        AND DATE_FORMAT(VTK_DATA, '%Y-%m-%d') >= {0} AND DATE_FORMAT(VTK_DATA, '%Y-%m-%d') <= {1}      
+        GROUP BY DATE_FORMAT(VTK_DATA, '%Y-%m-%d')
+        ORDER BY VTK_DATA DESC";
+      
+  $sql_ticket = "SELECT DATE_FORMAT(VTK_DATA, '%Y-%m-%d') AS DATA, VTK_IDENTIFICACAO, OPR_NOME, VTK_DESCRICAO, COUNT(VTK_CODIGO) AS QTDE, SUM(VTK_VALOR) AS TOTAL 
+        FROM SZO_VTK_VENDA_TICKETS 
+        INNER JOIN SZO_OPR_OPERADORES ON OPR_MD5 = VTK_OPR_MD5
+        WHERE VTK_IDENTIFICACAO NOT IN ('RICKSAM', 'ATLANTIS') AND DATE_FORMAT(VTK_DATA, '%Y-%m-%d') = {0}
+        GROUP BY DATE_FORMAT(VTK_DATA, '%Y-%m-%d'), VTK_IDENTIFICACAO, OPR_NOME, VTK_DESCRICAO
+        ORDER BY VTK_IDENTIFICACAO";
+        
+  $sql_pagamento = "SELECT DATE_FORMAT(PGT_TIMESTAMP, '%Y-%m-%d') AS DATA, PGT_IDENTIFICACAO, OPR_NOME, PGT_DESCRICAO, SUM(PGT_VALOR) AS TOTAL 
+        FROM SZO_PGT_PAGAMENTO 
+        INNER JOIN SZO_VDA_VENDA ON VDA_MD5 = PGT_VDA_MD5
+        INNER JOIN SZO_OPR_OPERADORES ON OPR_MD5 = VDA_OPR_MD5
+        WHERE VDA_IDENTIFICACAO NOT IN ('RICKSAM', 'ATLANTIS') AND DATE_FORMAT(PGT_TIMESTAMP, '%Y-%m-%d') = {0}
+        GROUP BY PGT_MOVIMENTO, PGT_IDENTIFICACAO, OPR_NOME, PGT_DESCRICAO
+        ORDER BY PGT_IDENTIFICACAO";
+        
+  $sql_troco="SELECT DATE_FORMAT(VDA_TIMESTAMP, '%Y-%m-%d') AS DATA, VDA_IDENTIFICACAO, OPR_NOME, SUM(VDA_TOTAL_PAGO) as TOTAL_PAGO, SUM(VDA_TROCO) AS TROCO, SUM(VDA_TOTAL) AS TOTAL
+        FROM SZO_VDA_VENDA                
+        INNER JOIN SZO_OPR_OPERADORES ON OPR_MD5 = VDA_OPR_MD5        
+        WHERE VDA_IDENTIFICACAO NOT IN ('RICKSAM', 'ATLANTIS') AND DATE_FORMAT(VDA_TIMESTAMP, '%Y-%m-%d') = {0}        
+        GROUP BY DATE_FORMAT(VDA_TIMESTAMP, '%Y-%m-%d'), VDA_IDENTIFICACAO, OPR_NOME
+        ORDER BY VDA_IDENTIFICACAO";
+  
+  $sql_caixa = "SELECT DATE_FORMAT(MCX_TIMESTAMP, '%Y-%m-%d') AS DATA, MCX_IDENTIFICACAO, MCX_TIPO, MCX_DATA, MCX_VALOR FROM SZO_MCX_MOVIMENTO_CAIXA  
+       WHERE MCX_IDENTIFICACAO NOT IN ('RICKSAM', 'ATLANTIS') AND DATE_FORMAT(MCX_TIMESTAMP, '%Y-%m-%d') = {0}
+       ORDER BY DATE_FORMAT(MCX_TIMESTAMP, '%Y-%m-%d')"; 
+  
+  param.add("Data De:", string, "Database", $sql_movimento_param,"DATA","DATA");
+  param.add("Data Ate:", string, "Database", $sql_movimento_param,"DATA","DATA");
+  param.add("Percentual Geral", decimal, 20);
+  param.add("Percentual Isento", decimal, 20);
+  param.show();
+  
+  $DtDe.mov(param.get(0));
+  $DtAte.mov(param.get(1));
+  $percentual_geral.mov(param.get(2));
+  $percentual_geral = 100 - $percentual_geral;
+  
+  $percentual_isento.mov(param.get(3));
+  $percentual_isento = 100 - $percentual_isento;
+  
+  strparam.clear();
+  strparam.add($DtDe.format("yyyy-MM-dd"), date);
+  strparam.add($DtAte.format("yyyy-MM-dd"), date);
+  
+  Movimento.new("Database");
+  Ticket.new("Database");
+  
+  Movimento.sql($sql_movimento);
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial, Verdana; font-size:14pt;}
+    h2{font-family:Arial, Verdana; font-size:12pt;}
+    p{font-family:Verdana, Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Arial, Verdana;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{font-weight:bold; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{font-weight:bold;border-top:1px solid #000; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Fechamento Período</h1>
+  <p>
+      Emissao : <?sys.now()?><br />
+      Data de : <?$v.mov(param.get(0)); $v.format("dd/MM/yy")?><br />
+      Data ate : <?$v.mov(param.get(1)); $v.format("dd/MM/yy")?><br />
+      Unidade : Parque Zoológico Municipal Quinzinho de Barros - PZMQB
+  </p>
+  
+<!-- Movimento -->
+<?band2:band1?>
+  <?
+    band.dst(Movimento);
+    strparam.clear();
+    strparam.add(Movimento.DATA, string);
+    
+    Ticket.sql($sql_ticket);
+    //Pagamento.sql($sql_pagamento);
+    //Troco.sql($sql_troco);
+    //Caixa.sql($sql_caixa);
+  ?>
+  <h2><?$v.mov(Movimento.DATA); $v.format("dd/MM/yyyy")?></h2>
+  
+  <!-- Tickets -->
+<?band3:band2?>
+  <?
+    $total_ticket.mov(0);
+    $total_qtde.mov(0);
+  ?>
+  <table>
+    <tr>
+      <td class='tit'>Caixa</td>
+      <td class='tit'>Operador</td>
+      <td class='tit'>Ticket</td>
+      <td class='tit vlr'>Quantidade</td>
+      <td class='tit vlr'>Total</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band4:band2?>
+  <?
+    band.dst(Ticket);
+    $gaveta.mov(0);
+  ?>
+    <tr>
+      <td ><?Ticket.VTK_IDENTIFICACAO?></td>
+      <td ><?Ticket.OPR_NOME?></td>
+      <td ><?Ticket.VTK_DESCRICAO?></td>
+      <td class='vlr'><?
+	    
+		$percentual.mov(Ticket.VTK_DESCRICAO);
+		$percentual.equals("ISENTO", $percentual_isento, $percentual_geral);
+		
+		
+		$vq = Ticket.QTDE * $percentual / 100; 
+		$vq.mov($vq.format("0")); 
+		$total_qtde.add($vq); 
+		$vq?></td>
+      <td class='vlr'>
+        <?
+          $vt = Ticket.TOTAL / Ticket.QTDE;
+          $v = $vt * $vq;
+          $total_ticket.add($v); 
+          $v.format("#,##0.00")
+        ?>
+      </td>
+    </tr> 
+<?band5:band2?>
+    <tr>
+      <td colspan="3" class="sum">Total</td>
+      <td class="sum vlr"><?$total_qtde.format("0")?></td>
+      <td class="sum vlr"><?$total_ticket.format("#,##0.00")?></td>
+    </tr>
+  </table><br />

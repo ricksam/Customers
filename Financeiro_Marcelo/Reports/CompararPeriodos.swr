@@ -1,0 +1,478 @@
+<?  
+  $sql_empresa = "select * from EMP_EMPRESAS";
+  
+  $sql_totcategoria = 
+    "
+      select sum(FIN_VALOR) as TOTAL from FIN_FINANCEIRO
+      inner join CAT_CATEGORIAS on CAT_CODIGO = FIN_CAT_CODIGO
+      where 
+        FIN_EMP_CODIGO = {0}
+        AND FIN_DATA >= {1}
+        AND FIN_DATA <= {2}
+        AND CAT_CODIGO in ({3})
+    ";
+    
+  $sql_totplano = 
+    "
+      select sum(FIN_VALOR) as TOTAL from FIN_FINANCEIRO
+      inner join PLN_PLANOCONTAS on PLN_CODIGO = FIN_PLN_CODIGO
+      where 
+        FIN_EMP_CODIGO = {0}
+        AND FIN_DATA >= {1}
+        AND FIN_DATA <= {2}
+        AND PLN_CODIGO in ({3})         
+    ";
+    
+  $sql_totinvertplano = 
+    "
+      select sum(FIN_VALOR) as TOTAL from FIN_FINANCEIRO
+      inner join PLN_PLANOCONTAS on PLN_CODIGO = FIN_PLN_CODIGO
+      inner join CAT_CATEGORIAS on CAT_CODIGO = FIN_CAT_CODIGO and CAT_TIPO = 'R'
+      where 
+        FIN_EMP_CODIGO = {0}
+        AND FIN_DATA >= {1}
+        AND FIN_DATA <= {2}
+        AND PLN_CODIGO not in ({3})         
+    ";
+    
+  $sql_trocoinicial = "select sum(FRM_TROCOINICIAL) as TOTAL from FRM_FORMULARIOS where FRM_EMP_CODIGO = {0} and FRM_DATA = {1}";
+  $sql_trocofinal = "select sum(FRM_TROCOFINAL) as TOTAL from FRM_FORMULARIOS where FRM_EMP_CODIGO = {0} and FRM_DATA = {1}";  
+  $sql_range = "select min(FRM_DATA) as PRIMEIRO, max(FRM_DATA) as ULTIMO from FRM_FORMULARIOS where FRM_DATA >= {0} and FRM_DATA <= {1}";
+  $sql_estoque = "select BAL_ESTOQUE_FINAL as ESTOQUE from BAL_BALANCO where BAL_EMP_CODIGO = {0} and BAL_DATA <= {1} order by BAL_CODIGO desc";
+  
+  param.add("Empresa",int,"Database",$sql_empresa, "EMP_CODIGO", "EMP_DESCRICAO");
+  param.add("Período inicial de :", date, sys.date());
+  param.add("Período inicial ate :", date, sys.date());
+  param.add("Período final de :", date, sys.date());
+  param.add("Período final ate :", date, sys.date());
+  param.show();
+  
+  $Emp_Codigo.mov(param.get(0));
+  $PerInicialDe.mov(param.get(1));
+  $PerInicialAte.mov(param.get(2));
+  $PerFinalDe.mov(param.get(3));
+  $PerFinalAte.mov(param.get(4));  
+  
+  Fin.new("Database");
+  Emp.new("Database");
+
+  strparam.clear();
+  strparam.add($Emp_Codigo, int);
+  Emp.sql("select * from EMP_EMPRESAS where EMP_CODIGO = {0}");
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial, Verdana; font-size:16pt; color:#367;}
+    p{font-family:Verdana, Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Arial, Verdana;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom; border-bottom:dotted 1px #000}
+    td.tit{font-weight:bold}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{font-weight:bold;border-top:1px solid #000; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Comparativo de períodos de vendas</h1>
+  <p>
+    Emissao : <?sys.now()?><br />
+	Empresa : <?Emp.EMP_DESCRICAO?>
+  </p>
+  <table>
+    <tr>
+      <td class="tit">INDICADOR</td>
+      <td class="tit vlr"><?$PerInicialDe.format("dd/MM/yy")?> a <?$PerInicialAte.format("dd/MM/yy")?></td>
+      <td class="tit vlr"><?$PerFinalDe.format("dd/MM/yy")?> a <?$PerFinalAte.format("dd/MM/yy")?></td>
+    </tr>  
+    <tr>
+      <td class="tit">Dinheiro</td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          strparam.add($PerInicialAte, date);
+          strparam.add(1, int);
+          Fin.sql($sql_totplano);
+          $Dinheiro_ini.mov(Fin.TOTAL); 
+          $Dinheiro_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          strparam.add($PerFinalAte, date);
+          strparam.add(1, int);
+          Fin.sql($sql_totplano);
+          $Dinheiro_fin.mov(Fin.TOTAL); 
+          $Dinheiro_fin.format("#,##0.00");
+        ?>
+      </td>      
+    </tr>
+    <tr>
+      <td class="tit">Cheque</td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          strparam.add($PerInicialAte, date);
+          strparam.add(3, int);
+          Fin.sql($sql_totplano);
+          $Cheque_ini.mov(Fin.TOTAL); 
+          $Cheque_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          strparam.add($PerFinalAte, date);
+          strparam.add(3, int);
+          Fin.sql($sql_totplano);
+          $Cheque_fin.mov(Fin.TOTAL); 
+          $Cheque_fin.format("#,##0.00");
+        ?>
+      </td>      
+    </tr>
+    <tr>
+      <td class="tit">Cartao</td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          strparam.add($PerInicialAte, date);
+          strparam.add("4,63", int);
+          Fin.sql($sql_totplano);
+          $Cartao_ini.mov(Fin.TOTAL); 
+          $Cartao_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          strparam.add($PerFinalAte, date);
+          strparam.add("4,63", int);
+          Fin.sql($sql_totplano);
+          $Cartao_fin.mov(Fin.TOTAL); 
+          $Cartao_fin.format("#,##0.00");
+        ?>
+      </td>      
+    </tr>
+    <tr>
+      <td class="tit">Outros</td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          strparam.add($PerInicialAte, date);
+          strparam.add(56, int);
+          Fin.sql($sql_totplano);
+          $Outros_ini.mov(Fin.TOTAL); 
+          
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          strparam.add($PerInicialAte, date);
+          strparam.add("1,3,4,63", int);
+          Fin.sql($sql_totinvertplano);
+          $Outros_ini.add(Fin.TOTAL); 
+          
+          $Outros_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          strparam.add($PerFinalAte, date);
+          strparam.add(56, int);
+          Fin.sql($sql_totplano);
+          $Outros_fin.mov(Fin.TOTAL); 
+          
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          strparam.add($PerFinalAte, date);
+          strparam.add("1,3,4,63", int);
+          Fin.sql($sql_totinvertplano);
+          $Outros_fin.add(Fin.TOTAL); 
+          
+          $Outros_fin.format("#,##0.00");
+        ?>
+      </td>      
+    </tr>
+    <tr>
+      <td class="tit">Despesas</td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          strparam.add($PerInicialAte, date);
+          strparam.add("3,4", int);
+          Fin.sql($sql_totcategoria);
+          $Despesas_ini.mov(Fin.TOTAL); 
+          $Despesas_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          strparam.add($PerFinalAte, date);
+          strparam.add("3,4", int);
+          Fin.sql($sql_totcategoria);
+          $Despesas_fin.mov(Fin.TOTAL); 
+          $Despesas_fin.format("#,##0.00");
+        ?>
+      </td>      
+    </tr>
+    <tr>
+      <td class="tit">Vales</td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          strparam.add($PerInicialAte, date);
+          strparam.add(2, int);
+          Fin.sql($sql_totcategoria);
+          $Vales_ini.mov(Fin.TOTAL); 
+          $Vales_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          strparam.add($PerFinalAte, date);
+          strparam.add(2, int);
+          Fin.sql($sql_totcategoria);
+          $Vales_fin.mov(Fin.TOTAL); 
+          $Vales_fin.format("#,##0.00");
+        ?>
+      </td>      
+    </tr>
+    <tr>
+      <td class="tit">Total</td>
+      <td class="vlr">
+        <?
+          $Total_ini = $Dinheiro_ini + $Cheque_ini + $Cartao_ini + $Outros_ini + $Despesas_ini + $Vales_ini;
+          $Total_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">
+        <?
+          $Total_fin = $Dinheiro_fin + $Cheque_fin + $Cartao_fin + $Outros_fin + $Despesas_fin + $Vales_fin;
+          $Total_fin.format("#,##0.00");
+        ?>
+      </td>
+    </tr>
+    <tr>
+      <td class="tit">Compras</td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          strparam.add($PerInicialAte, date);
+          strparam.add(5, int);
+          Fin.sql($sql_totcategoria);
+          $Compras_ini.mov(Fin.TOTAL); 
+          $Compras_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">        
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          strparam.add($PerFinalAte, date);
+          strparam.add(5, int);
+          Fin.sql($sql_totcategoria);
+          $Compras_fin.mov(Fin.TOTAL); 
+          $Compras_fin.format("#,##0.00");
+        ?>
+      </td>      
+    </tr>
+    <?
+      strparam.clear();
+      strparam.add($PerInicialDe, date);
+      strparam.add($PerInicialAte, date);
+      Fin.sql($sql_range);
+      $Primeiro_ini.mov(Fin.PRIMEIRO);
+      $Ultimo_ini.mov(Fin.ULTIMO);
+      
+      strparam.clear();
+      strparam.add($PerFinalDe, date);
+      strparam.add($PerFinalAte, date);
+      Fin.sql($sql_range);
+      $Primeiro_fin.mov(Fin.PRIMEIRO);
+      $Ultimo_fin.mov(Fin.ULTIMO);
+    ?>
+    <tr>
+      <td class="tit">Troco Inicial</td>
+      <td class="vlr">
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($Primeiro_ini, date);
+          Fin.sql($sql_trocoinicial);
+          $TrocoInicial_ini.mov(Fin.TOTAL);
+          $TrocoInicial_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($Primeiro_fin, date);
+          Fin.sql($sql_trocoinicial);
+          $TrocoInicial_fin.mov(Fin.TOTAL);
+          $TrocoInicial_fin.format("#,##0.00");
+        ?>
+      </td>
+    </tr>
+    <tr>
+      <td class="tit">Troco Final</td>
+      <td class="vlr">
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($Ultimo_ini, date);
+          Fin.sql($sql_trocofinal);
+          $TrocoFinal_ini.mov(Fin.TOTAL);
+          $TrocoFinal_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($Ultimo_fin, date);
+          Fin.sql($sql_trocofinal);
+          $TrocoFinal_fin.mov(Fin.TOTAL);
+          $TrocoFinal_fin.format("#,##0.00");
+        ?>
+      </td>
+    </tr>
+    <tr>
+      <td class="tit">Resultado</td>
+      <td class="vlr">
+        <?
+          $Resultado_ini = $Total_ini + $TrocoFinal_ini;
+          $Resultado_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">
+        <?
+          $Resultado_fin = $Total_fin + $TrocoFinal_fin;
+          $Resultado_fin.format("#,##0.00");
+        ?>
+      </td>
+    </tr>
+    <tr>
+      <td class="tit">Venda Líquida</td>
+      <td class="vlr">
+        <?
+          $VendaLiquida_ini = $Resultado_ini - $TrocoInicial_ini;
+          $VendaLiquida_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">
+        <?
+          $VendaLiquida_fin = $Resultado_fin - $TrocoInicial_fin;
+          $VendaLiquida_fin.format("#,##0.00");
+        ?>
+      </td>
+    </tr>
+    <tr>
+      <td class="tit">Estoque Inicial</td>
+      <td class="vlr">
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialDe, date);
+          Fin.sql($sql_estoque);
+          $EstoqueInicial_ini.mov(Fin.ESTOQUE);
+          $EstoqueInicial_ini.format("0.###");
+        ?>
+      </td>
+      <td class="vlr">
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalDe, date);
+          Fin.sql($sql_estoque);
+          $EstoqueInicial_fin.mov(Fin.ESTOQUE);
+          $EstoqueInicial_fin.format("0.###");
+        ?>
+      </td>
+    </tr>
+    <tr>
+      <td class="tit">Estoque Final</td>
+      <td class="vlr">
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerInicialAte, date);
+          Fin.sql($sql_estoque);
+          $EstoqueFinal_ini.mov(Fin.ESTOQUE);
+          $EstoqueFinal_ini.format("0.###");
+        ?>
+      </td>
+      <td class="vlr">
+        <?
+          strparam.clear();
+          strparam.add($Emp_Codigo, int);
+          strparam.add($PerFinalAte, date);
+          Fin.sql($sql_estoque);
+          $EstoqueFinal_fin.mov(Fin.ESTOQUE);
+          $EstoqueFinal_fin.format("0.###");
+        ?>
+      </td>
+    </tr>
+    <tr>
+      <td class="tit">% Vendas</td>
+      <td class="vlr">        
+        <?
+          $FinalCompras_ini = $Compras_ini + $EstoqueInicial_ini - $EstoqueFinal_ini;
+          $PercVendas_ini = (1 - ($FinalCompras_ini / $VendaLiquida_ini)) * 100;
+          $PercVendas_ini.format("#,##0.00");
+        ?>
+      </td>
+      <td class="vlr">
+        <?
+          $FinalCompras_fin = $Compras_fin + $EstoqueInicial_fin - $EstoqueFinal_fin;
+          $PercVendas_fin = (1 - ($FinalCompras_fin / $VendaLiquida_fin)) * 100;
+          $PercVendas_fin.format("#,##0.00");
+        ?>
+      </td>
+    </tr>
+  </table>
+</div>

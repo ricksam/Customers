@@ -1,0 +1,16 @@
+﻿@model  SysPoint.Models.LogError
+@{
+    ViewBag.Title = "LogErro";
+}
+
+
+<div class="container">
+    
+    @if (Model != null)
+    {
+        <h2>Ocorreu um erro!</h2>
+            <p># @Model.Id</p>
+            <p>@Model.Error</p>
+    }
+</div>
+

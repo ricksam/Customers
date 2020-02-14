@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Contato";
+    Layout = "~/Views/Shared/_LayoutOrgaoFacilProduto.cshtml";
+}
+
+<div id="Formulario">
+
+      <img style="float:right" alt="" class="image" src="../Templates/Goldenbitt/Imagens/mailicon.jpg" />
+          <div style="float:left" class="text">
+            <div class="Titulo">Contato</div>
+            <span id='lblMessage'></span>
+            <div id='contato_campos'>
+              <p>Coloque seu e mail e sua mensagem abaixo e breve entrarei em contato.</p>            
+              <p>
+                <label>Nome</label><br />
+                <input type="text" id="contato_nome" />
+              </p>  
+              <p>
+                <label>E-mail</label><br />
+                <input type="text" id="contato_email" />
+              </p>  
+              <p>
+                <label>Mensagem</label><br />
+                <textarea cols="60" rows="5" id="contato_message"> </textarea>
+              </p>  
+              <p>
+                <span id='contato_resposta'></span>
+                <button onclick="EnviarEmail()">Enviar</button>
+              </p>
+            </div>
+          </div>
+
+</div>
+
+<script type="text/javascript">
+  function EnviarEmail() {
+    var nome = getValue('contato_nome');
+    var email = getValue('contato_email');
+    var message = getValue('contato_message');
+
+    var msg_erro = "";
+
+    if (nome.length == 0)
+    { msg_erro += 'Informe seu nome<br />'; }
+
+    if (email.length == 0)
+    { msg_erro += 'Informe seu email<br />'; }
+
+    if (message.length == 0)
+    { msg_erro += 'Informe sua mensagem<br />'; }
+
+    if (msg_erro.length != 0) {
+      setHTML('lblMessage', msgErro(msg_erro));
+      return;
+    }
+
+    message =
+  '<p>' +
+  'Nome:' + nome + '<br/>' +
+  'Email:' + email + '<br/>' +
+  'Mensagem:' + message + '<br/>' +
+  '</p>';
+
+    var link = 'http://www.rcksoftware.com.br/service/mail.php';
+    var args = '?to=goldenvec@yahoo.com.br&subject=OrgaoFacil&message=' + message;
+
+    var cmd = link + args;
+
+    hideObject('contato_campos');
+    //makeRequest(cmd, alertContents);
+
+    setHTML('lblMessage', msgInfo('enviando ...'));
+    req = createRequest();
+    sendRequest(req, cmd, function () { alertContents(req) });
+
+  }
+
+  function alertContents(http_request) {
+    if (http_request.readyState == 4) {
+      setHTML('lblMessage', msgInfo('Email enviado com sucesso!'));
+    }
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+        

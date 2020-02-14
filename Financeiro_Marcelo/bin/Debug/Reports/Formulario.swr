@@ -1,0 +1,146 @@
+<?  
+  Frm.new("Database");
+  Frm.sql(
+      "
+      SELECT EMP_DESCRICAO, FRM_NUMERO, FRM_DATA, FRM_TROCOINICIAL, FRM_TROCOFINAL FROM FRM_FORMULARIOS
+      INNER JOIN EMP_EMPRESAS ON EMP_CODIGO = FRM_EMP_CODIGO
+      WHERE FRM_CODIGO = {0}
+      "
+  );
+  
+  Fin.new("Database");
+  Fin.sql(
+      "SELECT PLN_DESCRICAO, FIN_DESCRICAO, FIN_VALOR FROM FIN_FINANCEIRO
+      INNER JOIN FRM_FORMULARIOS ON FRM_CODIGO = FIN_FRM_CODIGO
+      INNER JOIN PLN_PLANOCONTAS ON PLN_CODIGO = FIN_PLN_CODIGO
+      WHERE PLN_CONFERENCIA = 1 AND FRM_CODIGO = {0}
+	    ORDER BY FIN_CAT_CODIGO, PLN_PRIORIDADE, PLN_CODIGO
+      "
+  );
+  
+  Merc.new("Database");
+  Merc.sql(
+    "SELECT PLN_DESCRICAO, FIN_DESCRICAO, FIN_VALOR FROM FIN_FINANCEIRO
+    INNER JOIN FRM_FORMULARIOS ON FRM_CODIGO = FIN_FRM_CODIGO
+    INNER JOIN PLN_PLANOCONTAS ON PLN_CODIGO = FIN_PLN_CODIGO
+    WHERE PLN_CONFERENCIA = 0 AND FRM_CODIGO = {0}
+    ORDER BY FIN_CAT_CODIGO, PLN_PRIORIDADE, PLN_CODIGO
+    "
+  );
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial, Verdana; font-size:16pt; color:#367;}
+    p{font-family:Verdana, Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Arial, Verdana;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{font-weight:bold; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{font-weight:bold;border-top:1px solid #000; vertical-align:middle}
+    .campo{float:left; padding:10px 20px}
+    .clear{ clear:both }
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Formulário</h1>
+  <p>
+    Emissao : <?sys.now()?><br />
+    Empresa : <?Frm.EMP_DESCRICAO?>
+  </p>
+  
+  <div class="campo">
+    <p>
+      <b>Formulário</b><br />
+      <?Frm.FRM_NUMERO?>
+    </p>
+  </div>
+  
+  <div class="campo">
+    <p>
+      <b>Data</b><br />
+      <?$v.mov(Frm.FRM_DATA); $v.format("dd/MM/yyyy")?>
+    </p>
+  </div>
+  
+  <div class="campo">
+    <p>
+      <b>Troco Inicial</b><br />
+      <?$v.mov(Frm.FRM_TROCOINICIAL); $v.format("#,##0.00")?>
+    </p>
+  </div>
+  
+  <div class="campo">
+    <p>
+      <b>Troco Final</b><br />
+      <?$v.mov(Frm.FRM_TROCOFINAL); $v.format("#,##0.00")?>
+    </p>
+  </div>
+  
+  <br class="clear" />
+<?band2:band1?>  
+  <table>
+    <tr>
+      <td class='tit'>Plano de Contas</td>
+      <td class='tit' width="200">Descrição</td>
+      <?$T_FIN_VALOR.mov(0)?>
+      <td class='tit vlr'>Valor</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->    
+<?band3:band1?>
+  <?band.dst(Fin)?>
+    <tr>
+      <td ><?Fin.PLN_DESCRICAO?></td>
+      <td ><?Fin.FIN_DESCRICAO?></td>
+      <?$T_FIN_VALOR.add(Fin.FIN_VALOR)?>
+      <td class='vlr'><?$v.mov(Fin.FIN_VALOR); $v.format("#,##0.00")?></td>
+    </tr>
+<?band4:band1?>
+    <!-- Rodapé do Relatório -->
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+      <td class='sum'>Total</td>
+      <td class='sum'>&nbsp;</td>
+      <?
+        $T_FIN_VALOR.sub(Frm.FRM_TROCOINICIAL);
+        $T_FIN_VALOR.add(Frm.FRM_TROCOFINAL);
+      ?>
+      <td class='sum vlr'><?$T_FIN_VALOR.format("#,##0.00")?></td>
+    </tr>
+  </table>
+  <p>Obs.: Total = soma(Lançamentos) + TrocoFinal - TrocoInicial</p>
+<?band5:band1?>
+  <h1>Outros lançamentos</h1>
+  <table>
+    <tr>
+      <td class='tit'>Plano de Contas</td>
+      <td class='tit' width="200">Descrição</td>
+      <?$T_FIN_VALOR.mov(0)?>
+      <td class='tit vlr'>Valor</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->    
+<?band6:band1?>
+  <?band.dst(Merc)?>
+    <tr>
+      <td ><?Merc.PLN_DESCRICAO?></td>
+      <td ><?Merc.FIN_DESCRICAO?></td>
+      <td class='vlr'><?$v.mov(Merc.FIN_VALOR); $v.format("#,##0.00")?></td>
+    </tr>
+<?band7:band1?>
+  </table>
+<?endband1?>
+</div>

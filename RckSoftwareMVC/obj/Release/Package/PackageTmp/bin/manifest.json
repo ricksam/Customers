@@ -1,0 +1,18 @@
+{
+  "short_name": "RCK Software",
+  "name": "The RCK Software",
+  "icons": [
+    {
+      "src": "icon48.png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "icon96.png",
+      "sizes": "96x96"
+    }
+  ],
+  "theme_color": "#ff0000",
+  "background_color": "#ff0000",
+  "start_url": "/Home/Index",
+  "display": "standalone"
+}

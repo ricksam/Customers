@@ -1,0 +1,371 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@section styles{
+    <style type="text/css">
+        input[type=number] {
+            -webkit-text-security: disc;
+        }
+    </style>
+    
+}
+<form id="form_dados" action="/SysPoint/Gravar" method="post">
+<input type="hidden" class="form-control" id="Latitude" name="Latitude" value="" />
+<input type="hidden" class="form-control" id="Longitude" name="Longitude" value="" />
+<input type="hidden" class="form-control" id="Codigo" name="Codigo" value="" />
+<input type="hidden" class="form-control" id="Foto" name="Foto" value="" />
+</form>
+<div id="div_Inicio" class="container">
+    <h1>
+        SysPoint</h1>
+    <p>Version: @(SysPoint.Helper.Utility.GetVersion())</p>
+    <p>
+        Clique no botão iniciar para acessar o sistema</p>
+    <p>
+        Se este for o primeiro acesso então será necessário autorizar o uso do GPS e câmera
+        para este sistema</p>
+    <p>
+        <a href="/Admin/Index">Clique aqui</a>  para acessar o painel administrativo
+    </p>
+</div>
+<div id="div_Codigo" style="display: none" class="container">
+    <label>
+        Local: <span class="span_Latitude"></span>, <span class="span_Longitude"></span>
+    </label> 
+    <h1>
+        Identificação</h1>
+    <div id="alert_codigo" class="alert alert-danger" role="alert">
+        Informe o seu código!
+    </div>
+    <div class="form-group">
+        
+        <label>
+            Informe o seu código</label>
+        <input class="form-control" type="number" pattern="[0-9]*" id="input_Codigo" value="" autocomplete="off" />
+    </div>
+    <button type="button" class="btn btn-primary btn-block" onclick="showCamera()">
+        Próximo</button>
+</div>
+<div id="div_Camera" style="display: none" class="container">
+    <h1>
+        Registre uma Foto</h1>
+    <p>
+        Usuário: <span class="span_Nome"></span>
+    </p>
+    <p>
+        <video autoplay style="height: 180px; width: 240px;"></video>
+    </p>
+    <p>
+        <button class="btn btn-lg btn-primary btn-block" onclick="RegisterAccess()">
+            Registrar Acesso
+        </button>
+        <button class="btn btn-lg btn-default btn-block" onclick="CancelRegister()">
+            Cancelar</button>
+    </p>
+    <p>
+    </p>
+    <p id="logTarget">
+    </p>
+</div>
+<div id="div_Sucesso" style="display: none" class="container">
+    <div class="alert alert-success" role="alert">
+        Registro efetuado com sucesso!
+    </div>
+    <p>
+        <label>
+            Usuário: <span class="span_Nome"></span>
+        </label>
+        <br />
+        <label>
+            Local: <span class="span_Latitude"></span>, <span class="span_Longitude"></span>
+        </label>
+        <br />
+    </p>
+    <p>
+        <img alt="foto" src="" id="imageTag" width="180"  />
+    </p>
+    <button class="btn btn-lg btn-default btn-block" onclick="CancelRegister()">
+        Novo Registro</button>
+</div>
+<footer id="footer" class="footer">
+    <div class="container">
+    <button class="btn btn-default btn-block start" id="startFull">Iniciar</button>
+    </div>
+</footer>
+@section Scripts{
+    <script type="text/javascript">
+
+    /*****************************************************************************************************/
+    /*                                          GPS                                                      */
+    /*****************************************************************************************************/
+
+        //var gps_target = document.getElementById('gps_target');
+        var watchId;
+
+        function appendLocation(location, verb) {
+            verb = verb || 'updated';
+            //var newLocation = document.createElement('p');
+            //newLocation.innerHTML = 'Location ' + verb + ': <a href="https://maps.google.com/maps?&z=15&q=' + location.coords.latitude + '+' + location.coords.longitude + '&ll=' + location.coords.latitude + '+' + location.coords.longitude + '" target="_blank">' + location.coords.latitude + ', ' + location.coords.longitude + '</a>';
+            //gps_target.appendChild(newLocation);
+            $("#Latitude").val(location.coords.latitude);
+            $("#Longitude").val(location.coords.longitude);
+
+            $(".span_Latitude").html(location.coords.latitude);
+            $(".span_Longitude").html(location.coords.longitude);
+        }
+
+        //if ('geolocation' in navigator) {
+        //document.getElementById('askButton').addEventListener('click', callGPS());
+        //} else {
+        //gps_target.innerText = 'Geolocation API not supported.';
+        //}
+
+        function callGPS() {
+            navigator.geolocation.getCurrentPosition(function (location) {
+                appendLocation(location, 'fetched');
+            });
+            watchId = navigator.geolocation.watchPosition(appendLocation);
+        }
+
+    /*****************************************************************************************************/
+    /*                                         CAMERA                                                    */
+    /*****************************************************************************************************/
+        function getUserMedia(options, successCallback, failureCallback) {
+            var api = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia || navigator.msGetUserMedia;
+            if (api) {
+                return api.bind(navigator)(options, successCallback, failureCallback);
+            }
+        }
+
+        var theStream;
+
+        function getStream() {
+            if (!navigator.getUserMedia && !navigator.webkitGetUserMedia &&
+                !navigator.mozGetUserMedia && !navigator.msGetUserMedia) {
+                alert('User Media API not supported.');
+                return;
+            }
+
+            var constraints = {
+                video: true
+            };
+
+            getUserMedia(constraints, function (stream) {
+                var mediaControl = document.querySelector('video');
+                if ('srcObject' in mediaControl) {
+                    mediaControl.srcObject = stream;
+                    mediaControl.src = (window.URL || window.webkitURL).createObjectURL(stream);
+                } else if (navigator.mozGetUserMedia) {
+                    mediaControl.mozSrcObject = stream;
+                }
+                theStream = stream;
+            }, function (err) {
+                alert('Error: ' + err);
+            });
+        }
+
+        function takePhoto() {
+            if (!('ImageCapture' in window)) {
+                alert('ImageCapture is not available');
+                return;
+            }
+
+            if (!theStream) {
+                alert('Grab the video stream first!');
+                return;
+            }
+
+            var theImageCapturer = new ImageCapture(theStream.getVideoTracks()[0]);
+
+            theImageCapturer.takePhoto()
+                .then(blob => {
+                    var theImageTag = document.getElementById("imageTag");
+                    theImageTag.src = URL.createObjectURL(blob);
+                    photoReader(blob);
+                })
+                .catch(err => alert('Error: ' + err));
+        }
+    /*****************************************************************************************************/
+    /*                                          FULL SCREEN                                              */
+    /*****************************************************************************************************/
+        var doc = document.querySelector.bind(document);
+        var sel = function (selector) {
+            return [].slice.call(document.querySelectorAll(selector), 0);
+        }
+        //var logTarget = doc('#logTarget');
+
+        function logChange(event) {
+            var timeBadge = new Date().toTimeString().split(' ')[0];
+            var newState = document.createElement('p');
+            newState.innerHTML = '<span class="badge">' + timeBadge + '</span> ' + event + '.';
+            //logTarget.appendChild(newState);
+        }
+
+        var prefix = null;
+        if ('requestFullscreen' in document.documentElement) {
+            prefix = 'fullscreen';
+        } else if ('mozRequestFullScreen' in document.documentElement) {
+            prefix = 'mozFullScreen';
+        } else if ('webkitRequestFullscreen' in document.documentElement) {
+            prefix = 'webkitFullscreen';
+        } else if ('msRequestFullscreen') {
+            prefix = 'msFullscreen';
+        }
+
+        var onFullscreenChange = function () {
+            var elementName = 'not set';
+            if (document[prefix + 'Element']) {
+                elementName = document[prefix + 'Element'].nodeName;
+            }
+            logChange('New fullscreen element is <b>' + elementName + '</b>');
+            onFullscreenHandler(!!document[prefix + 'Element']);
+        }
+
+        if (document[prefix + 'Enabled']) {
+            var onFullscreenHandler = function (started) {
+                //doc('#exit').style.display = started ? 'inline-block' : 'none';
+                sel('.start').forEach(function (x) {
+                    x.style.display = started ? 'none' : 'inline-block';
+                });
+            };
+
+            document.addEventListener(prefix.toLowerCase() + 'change', onFullscreenChange);
+
+            var goFullScreen = null;
+            var exitFullScreen = null;
+            if ('requestFullscreen' in document.documentElement) {
+                goFullScreen = 'requestFullscreen';
+                exitFullScreen = 'exitFullscreen';
+            } else if ('mozRequestFullScreen' in document.documentElement) {
+                goFullScreen = 'mozRequestFullScreen';
+                exitFullScreen = 'mozCancelFullScreen';
+            } else if ('webkitRequestFullscreen' in document.documentElement) {
+                goFullScreen = 'webkitRequestFullscreen';
+                exitFullScreen = 'webkitExitFullscreen';
+            } else if ('msRequestFullscreen') {
+                goFullScreen = 'msRequestFullscreen';
+                exitFullScreen = 'msExitFullscreen';
+            }
+
+            var goFullscreenHandler = function (element) {
+                return function () {
+                    var maybePromise = element[goFullScreen]();
+                    if (maybePromise && maybePromise.catch) {
+                        maybePromise.catch(function (err) {
+                            logChange('Cannot acquire fullscreen mode: ' + err);
+                        });
+                    }
+                };
+            };
+
+            doc('#startFull').addEventListener('click', function () { goFullscreen(document.documentElement)});
+
+            /*doc('#exit').addEventListener('click', function () {
+                document[exitFullScreen]();
+            });*/
+        }
+
+        function goFullscreen(element) {
+                var maybePromise = element[goFullScreen]();
+                if (maybePromise && maybePromise.catch) {
+                    maybePromise.catch(function (err) {
+                        logChange('Cannot acquire fullscreen mode: ' + err);
+                    });
+                }
+            startProgram();
+        }
+
+    /*****************************************************************************************************/
+    /*                                          MAIN                                                     */
+    /*****************************************************************************************************/
+
+        function photoReader(blob){
+            var reader = new FileReader();
+                 reader.readAsDataURL(blob); 
+                 reader.onloadend = function() {
+                     base64data = reader.result;                
+                     console.log(base64data);
+
+                     $("#Foto").val(base64data);
+                    SubmitForm();
+                 }
+        }
+        function showPage(id){
+            $('#div_Inicio').css("display", "none");
+            $('#div_Codigo').css("display", "none");
+            $('#div_Camera').css("display", "none");
+            $('#div_Sucesso').css("display", "none");
+            $('#Footer').css("display", "none");
+            $(id).css("display", "block");
+        }
+
+        function startProgram(){
+            showCodigo();
+            callGPS();
+            getStream();
+        }
+
+        function showCodigo(){
+            $("#input_Codigo").val("");
+            showPage("#div_Codigo");
+            $("#alert_codigo").css("display","none");
+        }
+
+        function showCamera() {
+            
+            rsp.post({ codigo : $("#input_Codigo").val() }, "/Home/ValidaUsuario", function (response) {
+                if (response != undefined && response.length != 0) {
+                    $("#Codigo").val($("#input_Codigo").val());
+                    $(".span_Nome").html(response);
+                    showPage("#div_Camera");
+                } else {
+                    $("#alert_codigo").html("Código inválido!");
+                    $("#alert_codigo").css("display", "block");
+                }
+            });
+
+            /*if($("#input_Codigo").val().length != 0){
+                $("#Codigo").val($("#input_Codigo").val());
+                showPage("#div_Camera");
+            }
+            else{
+                $("#alert_codigo").css("display","block");
+            }*/
+        }
+
+        function showSucesso(){
+            //$("#span_Codigo").html($("#Codigo").val());
+            $(".span_Latitude").html($("#Latitude").val());
+            $(".span_Longitude").html($("#Longitude").val());
+            showPage("#div_Sucesso");
+        }
+
+        function RegisterAccess(){
+            takePhoto();
+        }
+
+        function CancelRegister(){
+            showCodigo();
+        }
+
+        function SubmitForm() {
+            rsp.post("#form_dados", "/Home/Gravar", function (response) {
+                $("#imageTag").attr("src", "data:image/jpeg;base64," + response);
+                showSucesso();
+                //$("body").html(response);
+            })
+            /*$.ajax({
+                type:"POST",
+                url:"/Home/Gravar",
+                data:$("#form_dados").serialize()
+            }).done(function(response){
+               $("#imageTag").attr("src", "data:image/jpeg;base64,"+response);
+               showSucesso(); 
+               //$("body").html(response);
+            });*/
+            //document.forms['form_dados'].submit();
+        }
+        //goFullscreen(document.documentElement);
+    </script>
+}

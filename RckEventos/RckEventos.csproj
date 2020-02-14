@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3C171435-2820-425C-A534-3251BA8EF275}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RckEventos</RootNamespace>
+    <AssemblyName>RckEventos</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FastPixel.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="EmailCobrança.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EmailCobrança.Designer.cs">
+      <DependentUpon>EmailCobrança.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmFacebook.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmFacebook.Designer.cs">
+      <DependentUpon>frmFacebook.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoginFB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoginFB.Designer.cs">
+      <DependentUpon>LoginFB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mensagens.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mensagens.Designer.cs">
+      <DependentUpon>Mensagens.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Menu.Designer.cs">
+      <DependentUpon>Menu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mural.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mural.Designer.cs">
+      <DependentUpon>Mural.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mural2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mural2.Designer.cs">
+      <DependentUpon>Mural2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities.cs" />
+    <EmbeddedResource Include="EmailCobrança.resx">
+      <DependentUpon>EmailCobrança.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginFB.resx">
+      <DependentUpon>LoginFB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mensagens.resx">
+      <DependentUpon>Mensagens.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu.resx">
+      <DependentUpon>Menu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mural.resx">
+      <DependentUpon>Mural.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mural2.resx">
+      <DependentUpon>Mural2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\lib.class\lib.Class.csproj">
+      <Project>{4A3F7BED-010A-48C8-8673-E484F0148BA8}</Project>
+      <Name>lib.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\lib.Visual\lib.Visual.csproj">
+      <Project>{E168A2F0-C4C5-48C9-B915-CC88BFAE8980}</Project>
+      <Name>lib.Visual</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cartao_agradecimento1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rckpropaganda.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rckcontato.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,58 @@
+﻿@model RckDatabase.SIS_VER_VERSAO
+@{
+    ViewBag.Title = "Edit";
+}
+<div class="container">
+    <form method="post" action="/SIS/Edit" enctype="multipart/form-data">
+    <input type="hidden" name="VER_CODIGO" value="@(Model.VER_CODIGO)" />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>
+                    Sistema</label>
+                <input class="form-control" type="text" name="VER_SISTEMA" value="@(Model.VER_SISTEMA)" required />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>
+                    Solicitante</label>
+                <input class="form-control" type="text" name="VER_SOLICITANTE" value="@(Model.VER_SOLICITANTE)" required />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>
+                    Data</label>
+                <input class="form-control" type="text" name="VER_DATA" value="@(Model.VER_DATA)" required />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>
+                    Url</label>
+                <input class="form-control" type="text" name="VER_URL" value="@(Model.VER_URL)" required />
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>
+                    Descricao</label>
+                <input class="form-control" type="text" name="VER_DESCRICAO" value="@(Model.VER_DESCRICAO)" required />
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>
+                    Teste</label>
+                <textarea rows="8" class="form-control" name="VER_TESTE">@Model.VER_TESTE</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <button class="btn btn-primary" type="submit">
+            Salvar</button>
+        <a class="btn btn-default" href="/SIS/Index">Cancelar</a>
+    </div>
+    </form>
+</div>

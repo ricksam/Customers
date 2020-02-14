@@ -1,0 +1,385 @@
+<?  
+  $sql_balanco=
+    " SELECT 
+        BAL_CODIGO, 
+        CONCAT(
+          EMP_DESCRICAO,
+          ' (', 
+          DATE_FORMAT(BAL_INICIO, '%d/%m/%y'),
+          ' - ',
+          DATE_FORMAT(BAL_DATA, '%d/%m/%y'),
+          ')'
+        ) AS BALANCO 
+      FROM BAL_BALANCO 
+      INNER JOIN EMP_EMPRESAS ON EMP_CODIGO = BAL_EMP_CODIGO
+      ORDER BY BAL_CODIGO DESC
+      LIMIT 100";
+  
+  param.add("Selecione um balanço", int, "Database", $sql_balanco, "BAL_CODIGO", "BALANCO");  
+  //param.add("Informe os valores de pagamento em cheque", decimal);
+  //param.add("Informe o campo: D. CARTAO", decimal);
+  param.show();
+  
+  strparam.clear();
+  strparam.add(param.get(0), int);
+  
+  //$DespFolha.mov(param.get(1));
+  //$DCartao.mov(param.get(2));
+  
+  Bal.new("Database");
+  Bal.sql("select * from BAL_BALANCO where BAL_CODIGO = {0}");
+  
+  $PeriodoDe.mov(Bal.BAL_INICIO);
+  $PeriodoAte.mov(Bal.BAL_DATA);
+  $CodEmpresa.mov(Bal.BAL_EMP_CODIGO);
+  
+  strparam.clear();
+  strparam.add($PeriodoDe, date);
+  strparam.add($PeriodoAte, date);
+  strparam.add($CodEmpresa, int);
+  
+  D.new("Database");
+  Tot.new("Database");
+  D.sql(
+      "SELECT FRM_NUMERO, FRM_CODIGO, FRM_NUMERO_CLIENTES, FRM_VALOR_COMPARATIVO, FIN_DATA FROM FIN_FINANCEIRO
+      INNER JOIN FRM_FORMULARIOS ON FRM_CODIGO = FIN_FRM_CODIGO
+      WHERE 
+        FIN_DATA >= {0} AND
+        FIN_DATA <= {1} AND
+        FIN_EMP_CODIGO = {2} AND
+		FRM_NUMERO <> 0
+      GROUP BY FIN_DATA, FRM_NUMERO, FRM_CODIGO, FRM_NUMERO_CLIENTES, FRM_VALOR_COMPARATIVO
+      ORDER BY FIN_DATA, FRM_NUMERO "
+  );
+  
+  $sql_categoria =
+    " SELECT SUM(FIN_VALOR) AS TOTAL FROM FIN_FINANCEIRO
+      WHERE
+        FIN_CAT_CODIGO in ({0}) AND
+        FIN_EMP_CODIGO = {1} AND
+        FIN_FRM_CODIGO = {2}
+    ";
+  
+  $sql_totplano =
+    " SELECT SUM(FIN_VALOR) AS TOTAL FROM FIN_FINANCEIRO
+      WHERE
+        FIN_PLN_CODIGO in ({0}) AND
+        FIN_EMP_CODIGO = {1} AND
+        FIN_FRM_CODIGO = {2}
+    ";
+	
+	$sql_totplano_inverso =
+    " SELECT SUM(FIN_VALOR) AS TOTAL FROM FIN_FINANCEIRO
+	  INNER JOIN CAT_CATEGORIAS ON CAT_CODIGO = FIN_CAT_CODIGO AND CAT_TIPO = 'R'
+      WHERE
+        FIN_PLN_CODIGO not in ({0}) AND
+        FIN_EMP_CODIGO = {1} AND
+        FIN_FRM_CODIGO = {2}
+    ";
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial, Verdana; font-size:16pt; color:#367;}
+    p{font-family:Verdana, Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Arial, Verdana;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{font-weight:bold; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{font-weight:bold;border-top:1px solid #000; vertical-align:middle}
+    td.borda{border:1px solid #000;}
+    td.bordasimples{border-left:1px solid #000;border-right:1px solid #000;}
+    .resultado{float:left;margin-left:20px}
+  </style>
+  
+<?band2:band1?>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Balanço</h1>
+  <p>Emissao : <?sys.now()?></p>
+  <table>
+    <tr>
+      <td class='tit borda vlr'>NUM</td>
+      <td class='tit borda cen'>DATA</td>
+      <td class='tit borda cen'>DH</td>
+      <td class='tit borda cen'>CH</td>
+      <td class='tit borda cen'>OUTROS</td>
+      <td class='tit borda cen'>CARTAO</td>
+      <td class='tit borda cen'>DESPESAS</td>
+      <td class='tit borda cen'>VALES</td>
+      <td class='tit borda cen'>TOTAL</td>
+      <td class='tit borda cen'>COMPRAS</td>
+      <td class='tit borda cen'>N. CLI</td>
+      <td class='tit borda cen'>V FOLHA</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band3:band2?>
+  <?
+    band.dst(D);
+    
+    //Contador de Dias;
+    $DiaProximo.mov($QtdeDias);
+    $DiaProximo.add(1);
+    $Count.mov(D.FIN_DATA);
+    $Count.equals($Ant, $QtdeDias, $DiaProximo);
+    $QtdeDias.mov($Count);
+    $Ant.mov(D.FIN_DATA);
+    
+    //Plano de contas para Dinheiro;
+    strparam.clear();
+    strparam.add(1, int); 
+    strparam.add($CodEmpresa, int);
+    strparam.add(D.FRM_CODIGO, int);
+    
+    Tot.sql($sql_totplano);
+    $TotDin.mov(Tot.TOTAL);
+    
+    //Plano de contas para Cheque;
+    strparam.clear();
+    strparam.add(3, int); 
+    strparam.add($CodEmpresa, int);
+    strparam.add(D.FRM_CODIGO, int);
+    
+    Tot.sql($sql_totplano);
+    $TotCheque.mov(Tot.TOTAL);
+    
+    //Plano de contas para Outros;
+    strparam.clear();
+    strparam.add("1,3,4,63", int); 
+    strparam.add($CodEmpresa, int);
+    strparam.add(D.FRM_CODIGO, int);
+    
+    Tot.sql($sql_totplano_inverso);
+    $TotOutros.mov(Tot.TOTAL);
+	
+	//Compras a vista tbm entra em outros;
+	strparam.clear();
+    strparam.add("56", int); 
+    strparam.add($CodEmpresa, int);
+    strparam.add(D.FRM_CODIGO, int);
+    
+    Tot.sql($sql_totplano);
+    $TotOutros.add(Tot.TOTAL);
+	$TotOutros.equals("0","",$TotOutros);
+    
+    //Plano de contas para Cartao;
+    strparam.clear();
+    strparam.add("4,63", int); 
+    strparam.add($CodEmpresa, int);
+    strparam.add(D.FRM_CODIGO, int);
+    
+    Tot.sql($sql_totplano);
+    $TotCartao.mov(Tot.TOTAL);
+    
+    //Plano de contas para Despesas;
+    strparam.clear();
+    strparam.add("3,4", int); 
+    strparam.add($CodEmpresa, int);
+    strparam.add(D.FRM_CODIGO, int);
+    
+    Tot.sql($sql_categoria);
+    $TotDespesas.mov(Tot.TOTAL);
+    
+    //Plano de contas para Vales;
+    strparam.clear();
+    strparam.add(2, int); 
+    strparam.add($CodEmpresa, int);
+    strparam.add(D.FRM_CODIGO, int);
+    
+    Tot.sql($sql_categoria);
+    $TotVales.mov(Tot.TOTAL);
+    
+    //Total Geral;
+    $TotGeral.mov($TotDin);
+    $TotGeral.add($TotCheque);
+    $TotGeral.add($TotOutros);
+    $TotGeral.add($TotCartao);	
+    $TotGeral.add($TotDespesas);
+    $TotGeral.add($TotVales);
+    
+    //Plano de contas para Compras;
+    strparam.clear();
+    strparam.add(5, int); 
+    strparam.add($CodEmpresa, int);
+    strparam.add(D.FRM_CODIGO, int);
+    
+    Tot.sql($sql_categoria);
+    $TotCompras.mov(Tot.TOTAL);
+    
+    // Totalizador final;
+    $FinalDin.add($TotDin);
+    $FinalCheque.add($TotCheque);
+    $FinalOutros.add($TotOutros);
+    $FinalCartao.add($TotCartao);
+    $FinalDespesas.add($TotDespesas);
+    $FinalVales.add($TotVales);
+    $FinalGeral.add($TotGeral);
+    $FinalCompras.add($TotCompras);
+    $FinalClientes.add(D.FRM_NUMERO_CLIENTES);
+    $FinalComparativo.add(D.FRM_VALOR_COMPARATIVO);
+  ?>
+    <tr>
+      <td class='vlr'><a href="Formulario.swr?<?D.FRM_CODIGO?>"><?D.FRM_NUMERO?></a></td>
+      <td class='cen'><?$v.mov(D.FIN_DATA); $v.format("dd/MMM/yyyy")?></td>
+      <td class='vlr'><?$TotDin.format("#,##0.00")?></td>
+      <td class='vlr'><?$TotCheque.format("#,##0.00")?></td>
+      <td class='vlr'><?$TotOutros.format("#,##0.00")?></td>
+      <td class='vlr'><?$TotCartao.format("#,##0.00")?></td>
+      <td class='vlr'><?$TotDespesas.format("#,##0.00")?></td>
+      <td class='vlr'><?$TotVales.format("#,##0.00")?></td>
+      <td class='vlr bordasimples'><?$TotGeral.format("#,##0.00")?></td>
+      <td class='vlr'><?$TotCompras.format("#,##0.00")?></td>
+      <td class='vlr'><?D.FRM_NUMERO_CLIENTES?></td>
+      <td class='vlr'><?$v.mov(D.FRM_VALOR_COMPARATIVO); $v.format("#,##0.00")?></td>
+    </tr>
+<?band4:band1?>
+    <tr>
+      <td class='tit borda cen' colspan="2">TOTAL</td>
+      <td class='tit borda vlr'><?$FinalDin.format("#,##0.00")?></td>
+      <td class='tit borda vlr'><?$FinalCheque.format("#,##0.00")?></td>
+      <td class='tit borda vlr'><?$FinalOutros.format("#,##0.00")?></td>
+      <td class='tit borda vlr'><?$FinalCartao.format("#,##0.00")?></td>
+      <td class='tit borda vlr'><?$FinalDespesas.format("#,##0.00")?></td>
+      <td class='tit borda vlr'><?$FinalVales.format("#,##0.00")?></td>
+      <td class='tit borda vlr'><?$FinalGeral.format("#,##0.00")?></td>
+      <td class='tit borda vlr'><?$FinalCompras.format("#,##0.00")?></td>      
+      <td class='tit borda vlr'><?$FinalClientes?></td>      
+      <td class='tit borda vlr'><?$FinalComparativo.format("#,##0.00")?></td>      
+    </tr>
+  </table>
+<?band5:band1?>
+  <div class="resultado">
+    <table>
+      <tr><td>PERIODO</td>     <td class='cen'><?$PeriodoDe.format("dd/MM")?> a <?$PeriodoAte.format("dd/MM")?></td></tr>
+      <tr><td>N. DIAS</td>     <td class='cen'><?$QtdeDias?></td></tr>      
+      <tr><td>COMPRAS</td>     <td class='vlr'><?$FinalCompras.format("#,##0.00")?></td></tr>
+      <tr><td>EST. INICIAL</td><td class='vlr'><?$EstoqueInicial.mov(Bal.BAL_ESTOQUE_INICIAL); $EstoqueInicial.format("#,##0.00")?></td></tr>
+      <tr><td></td>            <td class='tit vlr'><?$TotPer.mov($FinalCompras); $TotPer.add($EstoqueInicial); $TotPer.format("#,##0.00")?></td></tr>
+      <tr><td>EST. FINAL</td>  <td class='vlr'><?$EstoqueFinal.mov(Bal.BAL_ESTOQUE_FINAL); $EstoqueFinal.format("#,##0.00")?></td></tr>
+      <tr><td>CVM</td>         <td class='tit vlr'><?$CVM.mov($TotPer); $CVM.sub($EstoqueFinal); $CVM.format("#,##0.00")?></td></tr>
+    </table>
+  </div>
+  
+  <?
+    Troco.new("Database");
+    
+    strparam.clear();
+    strparam.add($PeriodoDe, date);  
+    strparam.add($CodEmpresa, int);	
+    Troco.sql(
+      "SELECT SUM(FRM_TROCOINICIAL) AS FRM_TROCOINICIAL FROM FRM_FORMULARIOS
+      WHERE FRM_DATA = {0}
+	  AND FRM_EMP_CODIGO = {1}");
+    $TrocoInicial.mov(Troco.FRM_TROCOINICIAL);
+    
+    strparam.clear();
+    strparam.add($PeriodoAte, date);
+	strparam.add($CodEmpresa, int);
+    Troco.sql(
+      "SELECT SUM(FRM_TROCOFINAL) AS FRM_TROCOFINAL FROM FRM_FORMULARIOS
+      WHERE FRM_DATA = {0}
+	  AND FRM_EMP_CODIGO = {1}");
+    $TrocoFinal.mov(Troco.FRM_TROCOFINAL);
+	
+	$DCartao.mov($FinalCartao);
+	$DCartao.mpy(4);
+	$DCartao.div(100);
+	
+	$DespFolha.mov($FinalDespesas);
+	$DespFolha.add($FinalVales);
+	
+	strparam.clear();
+	strparam.add($PeriodoDe, date);
+	strparam.add($PeriodoAte, date);
+    strparam.add("2,3,4", int); 
+    strparam.add($CodEmpresa, int);
+    
+    Tot.sql(
+	"
+		SELECT SUM(FIN_VALOR) AS TOTAL FROM FIN_FINANCEIRO      
+    INNER JOIN CPG_CONTAS_PAGAR ON CPG_FIN_CODIGO = FIN_CODIGO
+    INNER JOIN BCN_BAIXA_CONTAS ON BCN_CODIGO = CPG_BCN_CODIGO
+		LEFT OUTER JOIN FRM_FORMULARIOS ON FRM_CODIGO = FIN_FRM_CODIGO    
+		WHERE
+        BCN_DATA_PGTO >= {0} AND
+        BCN_DATA_PGTO <= {1} AND             
+		FIN_CAT_CODIGO in ({2}) AND        
+		FIN_EMP_CODIGO = {3} AND        
+		(FRM_NUMERO = 0 OR FIN_FRM_CODIGO IS NULL)"
+	);
+    $DespFolha.add(Tot.TOTAL);
+  ?>
+  
+  <div class="resultado">
+    <table>
+      <tr><td>T. VENDA</td>    <td class='cen'><?$FinalGeral.format("#,##0.00")?></td></tr>
+      <tr><td>TR. FINAL</td>   <td class='vlr'><?$TrocoFinal.format("#,##0.00")?></td></tr>
+      <tr><td></td>            <td class='tit vlr'><?$ResVenda.mov($FinalGeral); $ResVenda.add($TrocoFinal); $ResVenda.format("#,##0.00")?></td></tr>
+      <tr><td>TR. INICIAL</td> <td class='vlr'><?$TrocoInicial.format("#,##0.00")?></td></tr>
+      <tr><td>V. LIQUIDA</td>  <td class='tit vlr'><?$VLiquida.mov($ResVenda); $VLiquida.sub($TrocoInicial); $VLiquida.format("#,##0.00")?></td></tr>
+    </table>
+  </div>
+  
+  <div class="resultado">
+    <table>
+      <tr><td>V. LIQUIDA</td> <td class='cen'><?$VLiquida.format("#,##0.00")?></td></tr>
+      <tr><td>CVM</td>        <td class='vlr'><?$CVM.format("#,##0.00")?></td></tr>
+      <tr><td>L. BRUTO</td>   <td class='tit vlr'><?$LBruto.mov($VLiquida); $LBruto.sub($CVM); $LBruto.format("#,##0.00")?></td></tr>
+      <tr><td>DESP+FOLHA</td> <td class='vlr'><?$DespFolha.format("#,##0.00")?></td></tr>
+      <tr><td>D. CARTAO</td>  <td class='vlr'><?$DCartao.format("#,##0.00")?></td></tr>
+      <tr><td>L. LIQUIDO</td> <td class='tit vlr'><?$LLiquido.mov($LBruto); $LLiquido.sub($DespFolha); $LLiquido.sub($DCartao); $LLiquido.format("#,##0.00")?></td></tr>
+    </table>
+  </div>
+  
+  <?
+    $VDiaria.mov($FinalComparativo);
+    $VDiaria.div($QtdeDias);
+    
+    $ClienteDi.mov($FinalClientes);
+    $ClienteDi.div($QtdeDias);
+    
+    $GastoMD.mov($VDiaria);
+    $GastoMD.div($ClienteDi);
+  ?>
+	
+	
+  <?	
+	$PerVenda.mov($FinalCompras);
+	$PerVenda.add($EstoqueInicial);
+	$PerVenda.sub($EstoqueFinal);
+	$PerVenda.div($VLiquida);
+	$PerVenda.sub(1);
+	$PerVenda.mpy(-100);
+	
+	$PerCompra.mov($LBruto);
+	$PerCompra.div($CVM);
+	$PerCompra.mpy(100);
+  ?>
+  
+  <div class="resultado">
+    <table>
+      <tr><td>V. DIARIA</td>  <td class='cen'><?$VDiaria.format("#,##0.00")?></td></tr>
+      <tr><td>CLIENTE DI</td> <td class='vlr'><?$ClienteDi.format("#,##0.00")?></td></tr>
+      <tr><td>GASTO MD</td>   <td class='tit vlr'><?$GastoMD.format("#,##0.00")?></td></tr>
+      <tr><td></td>           <td class='vlr'></td></tr>
+      <tr><td>% VENDA</td>    <td class='vlr'><?$PerVenda.format("#,##0.00")?></td></tr>
+      <tr><td>% COMPRA</td>   <td class='tit vlr'><?$PerCompra.format("#,##0.00")?></td></tr>
+    </table>
+  </div>
+<?endband1?>  
+  <br style="clear:both" />
+</div>

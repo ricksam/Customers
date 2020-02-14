@@ -1,0 +1,179 @@
+<?
+  $sql_empresa = "SELECT EMP_CODIGO, EMP_NOME FROM EMP_EMPRESA";
+                  
+  param.add("Mês: ", int);
+  param.add("Ano: ", int);
+  param.add("Empresa: ", int, "Database", $sql_empresa, "EMP_CODIGO", "EMP_NOME");
+  param.show();
+  
+  $mes.mov(param.get(0));
+  $ano.mov(param.get(1));
+  
+  Empresa.new("Database");
+  Empresa.sql("SELECT EMP_CODIGO, EMP_NOME FROM EMP_EMPRESA WHERE EMP_CODIGO = {2} ");
+    
+  Colaboradores.new("Database");
+  Colaboradores.sql(
+      "SELECT CLB_CODIGO, CLB_NOME FROM CLB_COLABORADOR WHERE CLB_EMP_CODIGO = {2}"
+  );
+  
+  Operacoes.new("Database");
+  Operacoes.sql(
+    " SELECT OPR_CODIGO, OPR_DESCRICAO FROM OPR_OPERACAO
+      INNER JOIN LNC_LANCAMENTO ON LNC_OPR_CODIGO = OPR_CODIGO AND LNC_MES = {0} AND LNC_ANO = {1}
+      GROUP BY OPR_DESCRICAO
+      ORDER BY OPR_TIPO, OPR_NIVEL"
+  );
+  
+  Valor.new("Database");
+  $sql_valor = 
+    " SELECT SUM(LNC_VALOR) AS VALOR FROM LNC_LANCAMENTO
+      WHERE LNC_MES = {0} AND LNC_ANO = {1} AND LNC_CLB_CODIGO = {2} AND LNC_OPR_CODIGO = {3}";
+      
+  $sql_total =
+    " SELECT SUM(LNC_VALOR) AS VALOR FROM LNC_LANCAMENTO
+      INNER JOIN OPR_OPERACAO ON OPR_CODIGO = LNC_OPR_CODIGO AND OPR_TIPO = {3} 
+      WHERE LNC_MES = {0} AND LNC_ANO = {1} AND LNC_CLB_CODIGO = {2} ";
+      
+  $sql_totalOperacoes =
+    " SELECT SUM(LNC_VALOR) AS VALOR FROM LNC_LANCAMENTO
+      WHERE LNC_MES = {0} AND LNC_ANO = {1} AND LNC_OPR_CODIGO = {2}";
+      
+  $sql_totalFinal =
+    " SELECT SUM(LNC_VALOR) AS VALOR FROM LNC_LANCAMENTO
+      INNER JOIN OPR_OPERACAO ON OPR_CODIGO = LNC_OPR_CODIGO AND OPR_TIPO = {2} 
+      WHERE LNC_MES = {0} AND LNC_ANO = {1} ";
+ ?>
+ 
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+      height:100%;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; text-decoration:underline; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.sumary{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.subtit{color:#365f91; vertical-align:middle;}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+<?band2:band1?>
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Lançamentos Loja</h1>
+  <p>
+    Emissao : <?sys.now()?><br />
+    Loja :  <?Empresa.EMP_NOME?><br />
+    Período : <?$mes?> / <?$ano?>  
+  </p>
+  <table>
+    <tr>
+      <td class='tit'>COLABORADORES</td>
+      <?band3:band2?>
+        <?band.dst(Operacoes)?>
+      <td class='tit'><?Operacoes.OPR_DESCRICAO?></td>  
+<?endband2?>
+      <td class='tit'>REMUNERAÇÃO TOTAL</td>
+      <td class='tit'>DESCONTOS TOTAIS</td>
+      <td class='tit'>REMUNERAÇÃO LÍQUIDA</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band4:band1?>
+  <?band.dst(Colaboradores); Operacoes.first();?>
+    <tr>
+      <td class='subtit'><?Colaboradores.CLB_NOME?></td>
+      <?band5:band4?>
+        <?
+          band.dst(Operacoes);  
+          
+          strparam.clear();
+          strparam.add($mes, int);
+          strparam.add($ano, int);
+          strparam.add(Colaboradores.CLB_CODIGO, int);
+          strparam.add(Operacoes.OPR_CODIGO, int);
+          Valor.sql($sql_valor);
+        ?>
+      <td class='vlr'><?$v.mov(Valor.VALOR); $v.format("#,##0.00")?></td> 
+<?endband4?>
+    <?
+      // Remuneração total;
+      strparam.clear();
+      strparam.add($mes, int);
+      strparam.add($ano, int);
+      strparam.add(Colaboradores.CLB_CODIGO, int);
+      strparam.add("C", string);
+      Valor.sql($sql_total);
+      $Remuneracao_Total.mov(Valor.VALOR);
+      
+      // Desconto totais;
+      strparam.clear();
+      strparam.add($mes, int);
+      strparam.add($ano, int);
+      strparam.add(Colaboradores.CLB_CODIGO, int);
+      strparam.add("D", string);
+      Valor.sql($sql_total);
+      $Desconto_Totais.mov(Valor.VALOR);
+      
+      $Remuneracao_Liquida = $Remuneracao_Total - $Desconto_Totais;
+    ?>
+      <td class='subtit vlr'><?$Remuneracao_Total.format("#,##0.00")?></td>
+      <td class='subtit vlr'><?$Desconto_Totais.format("#,##0.00")?></td>
+      <td class='subtit vlr'><?$Remuneracao_Liquida.format("#,##0.00")?></td>
+    </tr>
+<?band6:band1?>
+  <?Operacoes.first();?>
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td class='sumary'>TOTAL</td>
+    <?band7:band6?>
+      <?
+        band.dst(Operacoes);
+        strparam.clear();
+        strparam.add($mes, int);
+        strparam.add($ano, int);
+        strparam.add(Operacoes.OPR_CODIGO, int);
+        Valor.sql($sql_totalOperacoes);
+      ?>
+    <td class='sumary vlr'><?$v.mov(Valor.VALOR); $v.format("#,##0.00")?></td> 
+<?endband6?>          
+    <?
+      // Remuneração total;
+      strparam.clear();
+      strparam.add($mes, int);
+      strparam.add($ano, int);
+      strparam.add("C", string);
+      Valor.sql($sql_totalFinal);
+      $Remuneracao_Total.mov(Valor.VALOR);
+      
+      // Desconto totais;
+      strparam.clear();
+      strparam.add($mes, int);
+      strparam.add($ano, int);
+      strparam.add("D", string);
+      Valor.sql($sql_totalFinal);
+      $Desconto_Totais.mov(Valor.VALOR);
+      
+      $Remuneracao_Liquida = $Remuneracao_Total - $Desconto_Totais;
+    ?>
+      <td class='sumary vlr'><?$Remuneracao_Total.format("#,##0.00")?></td>
+      <td class='sumary vlr'><?$Desconto_Totais.format("#,##0.00")?></td>
+      <td class='sumary vlr'><?$Remuneracao_Liquida.format("#,##0.00")?></td>
+  </tr>
+<?endband1?>
+  </table>
+</div>

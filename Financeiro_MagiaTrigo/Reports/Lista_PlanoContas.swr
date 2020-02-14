@@ -1,0 +1,52 @@
+<?
+  D.new("Database");
+  D.sql(
+      "select PLN_TIPO, PLN_DESCRICAO from PLN_PLANO_CONTAS order by PLN_TIPO desc"
+  );
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#bce;     
+      background-size:cover;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+      height:100%;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial; font-size:14pt; color:#365f91; font-weight:normal}
+    p{font-family:Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Verdana, Arial;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{border-bottom:1px solid #365f91; color:#365f91; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{border-top:1px solid #365f91; color:#365f91; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Lista de Plano de Contas</h1>
+  <p>Emissao : <?sys.now()?></p>
+  <table>
+    <tr>
+      <td class='tit'>Tipo</td>
+      <td class='tit'>Descrição</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2?>
+  <?band.dst(D)?>
+    <tr>
+      <td ><?D.PLN_TIPO?></td>
+      <td ><?D.PLN_DESCRICAO?></td>
+    </tr>
+<?endband1?>
+  </table>
+</div>

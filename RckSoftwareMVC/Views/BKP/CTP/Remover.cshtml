@@ -1,0 +1,15 @@
+﻿@model RckSoftwareMVC.CTP_AUT_AUTORIZADOS
+@{
+    ViewBag.Title = "Remover";
+}
+
+<h2>Atenção</h2>
+<p>Tem certeza que deseja remover o visitante @(Model.AUT_NOME)</p>
+<form action="/CTP/Remover/@(Model.AUT_CODIGO)" method="post">
+  <input type="hidden" name="id" value="@(Model.AUT_CODIGO)" />
+  <button type="submit">Sim</button>
+</form>
+
+<form action="/CTP/Listar" method="get">
+  <button type="submit" value="false">Nao</button>
+</form>

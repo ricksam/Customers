@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+<form action="/CTP/Login" method="post">
+@if (!string.IsNullOrEmpty(ViewBag.msg))
+{
+  <p class="error">@ViewBag.msg</p>
+}
+<input type="text" class="s4" name="Email" placeholder="Email" /><br />
+<input type="password" class="s4" name="Senha" placeholder="Senha" /><br />
+<button type="submit">Entrar</button><br />
+<a href="EnviarSenha">Esqueci minha senha</a><br />
+<a href="EnviarSenha">Criar uma nova senha</a>
+</form>

@@ -1,0 +1,55 @@
+﻿@model SysPoint.Models.Colaboradores
+@{
+    ViewBag.Title = "Colaboradores";
+    Layout = "~/Views/Shared/_LayoutNav.cshtml";
+}
+
+
+<div class="container">
+    <div class="page-header">
+        <h1>@ViewBag.Title</h1>
+    </div>
+
+    <form action="/Colaboradores/Edit" method="post">
+        <input type="hidden" name="Id" value="@(Model.Id)" />
+
+        <div class="form-group">
+            <label class="col-sm-2">Nome</label>
+            <div class="col-sm-10"><input type="text" class="form-control" name="Nome" value="@(Model.Nome)" /></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2">Código Acesso</label>
+            <div class="col-sm-10"><input type="text" class="form-control" name="Senha" value="@(Model.Senha)" /></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2">Unidade</label>
+            <div class="col-sm-10"><input type="text" class="form-control" name="Unidade" value="@(Model.Unidade)" /></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2">Turno</label>
+            <div class="col-sm-10"><input type="text" class="form-control" name="Turno" value="@(Model.Turno)" /></div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-2">Empresa</label>
+            <div class="col-sm-10">
+                @Html.Action("Combo", "Empresa", new { SelectedItem = Model.Id_Empresa })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2">Supervisor</label>
+            <div class="col-sm-10">
+                @Html.Action("Combo", "Usuario", new { Id = "Id_Supervisor", Name = "Id_Supervisor", SelectedItem = Model.Id_Supervisor })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-primary" type="submit">Gravar</button>
+                <a href="/Colaboradores/Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+

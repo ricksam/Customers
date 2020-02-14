@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Title = "Admin";
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h2>Admin</h2>
+            <label>Token: </label>
+            <input class="form-control " disabled value="@(Session["SysCam"])" />
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div id="ListaDatas">
+                    </div>
+                    
+                    @Html.Action("ListaCameras", "SysCam")
+                    <div>
+
+                    </div>
+                </div>
+                <div id="ExibeImagens" class="col-md-9">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+@section scripts{
+    <script type="text/javascript">
+
+        let timer=null
+        let index = 0;
+        let list = [];
+
+    $(document).ready(function () {
+            SelecionaData();
+    })
+
+        function SelecionaData(data) {
+            rsp.get({ data }, "/SysCam/ListaDatas", "#ListaDatas");
+            rsp.get({ data }, "/SysCam/ExibeImagens", (res) => {
+                $("#ExibeImagens").html(res);
+                loopImage();
+            });
+        }
+
+        function loopImage() {
+            
+            clearInterval(timer);
+            if (list && list.length != 0) {
+                timer = setInterval(function () {
+                    if (list && list.length != 0) {
+                        $("#image").attr("src", 'data:image/jpeg;base64,' + list[index]);
+                        index++;
+                        if (index >= list.length) {
+                            index = 0;
+                        }
+
+                        loopImage();
+                    }
+                }, 1000);
+            }
+        }
+    </script>
+}

@@ -1,0 +1,83 @@
+<? 
+  $sql_empresa = "select * from EMP_EMPRESAS";
+  param.add("Empresa",int,"Database",$sql_empresa,"EMP_CODIGO", "EMP_DESCRICAO");  
+  param.add("Dt. Emissão De:", date, sys.date());
+  param.add("Dt. Emissão Até:", date, sys.date());
+  param.show();
+  
+  D.new("Database");
+  D.sql(
+      "select FIN_EMISSAO, CPG_DOCUMENTO, FRN_NOME, FIN_DESCRICAO, FIN_VALOR 
+      from FIN_FINANCEIRO      
+      INNER JOIN PLN_PLANOCONTAS ON PLN_CODIGO = FIN_PLN_CODIGO
+	  LEFT OUTER JOIN CPG_CONTAS_PAGAR ON FIN_CODIGO = CPG_FIN_CODIGO
+	  LEFT OUTER JOIN FRN_FORNECEDORES ON FRN_CODIGO = CPG_FRN_CODIGO
+      WHERE 
+        FIN_CAT_CODIGO = 5
+        AND FIN_EMP_CODIGO = {0}
+        AND FIN_DATA >= {1}
+        AND FIN_DATA <= {2}
+      ORDER BY FIN_DATA
+        "
+  ); 
+?>
+<?band1?>
+  <style type="text/css" media="screen">
+    body
+    {
+      background-color:#aaa;
+      padding:20px 20px 0 20px;
+    }
+    .page
+    {
+      background-color:White;
+      border:1px solid #777;
+      padding:60px 40px 40px 60px;
+    }
+  </style>
+  <style type="text/css" media="all">
+    h1{font-family:Arial, Verdana; font-size:16pt; color:#367;}
+    p{font-family:Verdana, Arial; font-size:8pt}
+    table {border-collapse:collapse;border-spacing:0;}
+    td{font-family:Arial, Verdana;font-size:10pt;padding:0 5px; height:30px; vertical-align:bottom}
+    td.tit{font-weight:bold; vertical-align:middle}
+    td.vlr{text-align:right;}
+    td.cen{text-align:center;}
+    td.sum{font-weight:bold;border-top:1px solid #000; vertical-align:middle}
+  </style>
+
+<div class='page'>
+  <!-- Cabeçalho do Relatório -->
+  <h1>Mercadorias (por data de entrada)</h1>
+  <p>
+  Emissao : <?sys.now()?><br />
+  Período de <?$v.mov(strparam.get(1)); $v.format("dd/MM/yyyy")?>
+   ate <?$v.mov(strparam.get(2)); $v.format("dd/MM/yyyy")?><br />
+  </p>
+  <table>
+    <tr>
+      <td class='tit cen'>Data</td>
+	  <td class='tit'>Fornecedor</td>
+      <td class='tit'>Documento</td>
+      <td class='tit'>Descrição</td>
+      <td class='tit vlr'>Valor</td>
+    </tr>
+  <!-- Conteúdo do Relatório -->
+<?band2?>
+  <?
+    band.dst(D);
+	$Total.add(D.FIN_VALOR);
+  ?>
+    <tr>
+      <td class='cen'><?$v.mov(D.FIN_EMISSAO); $v.format("dd/MM/yyyy")?></td>
+	  <td ><?D.FRN_NOME?></td>
+      <td ><?D.CPG_DOCUMENTO?></td>
+      <td ><?D.FIN_DESCRICAO?></td>
+      <td class='vlr'><?$v.mov(D.FIN_VALOR); $v.format("#,##0.00")?></td>
+    </tr>
+<?endband1?>
+    <tr>
+	  <td class='tit vlr' colspan='5'><?$Total.format("#,##0.00")?></td>
+	</tr>
+  </table>
+</div>

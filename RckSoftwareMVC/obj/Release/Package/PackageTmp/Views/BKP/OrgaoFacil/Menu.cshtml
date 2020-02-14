@@ -1,0 +1,10 @@
+﻿@{
+    Layout = null;
+}
+
+<ul>
+    <li class='@(ViewBag.title=="Index"?"active":"")'><a href='/OrgaoFacil/Index'><span>Home</span></a></li>
+    <li class='@(ViewBag.title == "Sobre Nós" ? "active" : "")'><a href='/OrgaoFacil/SobreNos'><span>Sobre Nós</span></a></li>
+    <li class='@(ViewBag.title=="Produtos"?"active":"")'><a href='/OrgaoFacil/Index'><span>Produtos</span></a></li>
+    <li class='@(ViewBag.title == "Contato" ? "active" : "") last'><a href='/OrgaoFacil/Contato'><span>Contato</span></a></li>
+</ul>
