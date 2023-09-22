@@ -5,7 +5,6 @@
     string images = string.Format("[{0}]", String.Join(",", Model.Select(i => string.Format("'{0}'",i.image.ToString())).ToArray()));
 }
 
-<h3>Imagens</h3>
 <p>ids: @(ids)</p>
 <label id="labelid"></label>
 <img id="image" />

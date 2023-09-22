@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = "Index";
+    string date = DateTime.Now.ToString("yyMMddHHmmss");
+}
+
+<div class="container">
+    <form action="/mem/save" method="post">
+        <div class="card form-group">
+            <div class="card-header">
+            </div>
+            <div class="card-body">
+                <textarea name="Content" rows="10" class="my-2 form-control">@(ViewBag.Content)</textarea>
+
+                <button class="btn btn-primary">Save</button>
+                <a class="btn btn-secondary" href="/mem?@(date)">Reload</a>
+            </div>
+        </div>
+    </form>
+</div>

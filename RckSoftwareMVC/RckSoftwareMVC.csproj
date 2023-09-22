@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RckSoftwareMVC</RootNamespace>
     <AssemblyName>RckSoftwareMVC</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
@@ -44,11 +44,23 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Azure.Core, Version=1.15.0.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Core.1.15.0\lib\net461\Azure.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Azure.Storage.Blobs, Version=12.9.1.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Storage.Blobs.12.9.1\lib\netstandard2.0\Azure.Storage.Blobs.dll</HintPath>
+    </Reference>
+    <Reference Include="Azure.Storage.Common, Version=12.8.0.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Storage.Common.12.8.0\lib\netstandard2.0\Azure.Storage.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Dapper, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.1.50.5\lib\net451\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp">
       <Private>True</Private>
@@ -66,16 +78,28 @@
     <Reference Include="System">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data">
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.6.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing">
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Management">
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory.Data, Version=1.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.Data.1.0.2\lib\net461\System.Memory.Data.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
@@ -86,7 +110,26 @@
     <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
     </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.6.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.5.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.4.7.2\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.4.6.0\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData">
       <Private>True</Private>
     </Reference>
@@ -214,13 +257,19 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Classes\JSON.cs" />
-    <Compile Include="Classes\SNConfigList.cs" />
+    <Compile Include="Controllers\QrCodeController.cs" />
+    <Compile Include="Helpers\JSON.cs" />
+    <Compile Include="Helpers\OptionSetter.cs" />
+    <Compile Include="Helpers\ProcessImage.cs" />
+    <Compile Include="Helpers\QrCodeHelper.cs" />
+    <Compile Include="Helpers\SNConfigList.cs" />
     <Compile Include="ControllersApi\SysCamApiController.cs" />
     <Compile Include="Controllers\BKP\CCBController.cs" />
     <Compile Include="Controllers\BKP\CTPController.cs" />
+    <Compile Include="Controllers\DropController.cs" />
     <Compile Include="Controllers\EscalaController.cs" />
     <Compile Include="Controllers\BKP\FBController.cs" />
+    <Compile Include="Controllers\FastCodeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\BKP\OrgaoFacilController.cs" />
     <Compile Include="Controllers\BKP\RckController.cs" />
@@ -228,12 +277,18 @@
     <Compile Include="Controllers\BKP\SISController.cs" />
     <Compile Include="Controllers\BKP\SNKController.cs" />
     <Compile Include="Controllers\IpController.cs" />
+    <Compile Include="Controllers\MemController.cs" />
+    <Compile Include="Controllers\PassController.cs" />
+    <Compile Include="Controllers\PrivacyPolicyController.cs" />
     <Compile Include="Controllers\SysCamController.cs" />
     <Compile Include="Controllers\BKP\SysPointController.cs" />
     <Compile Include="Controllers\BKP\SZOOldController.cs" />
+    <Compile Include="Controllers\WebHooksController.cs" />
     <Compile Include="Filters\CompressFilter.cs" />
-    <Compile Include="Helper\BaseEntity.cs" />
-    <Compile Include="Helper\Context.cs" />
+    <Compile Include="Helpers\BaseEntity.cs" />
+    <Compile Include="Helpers\Context.cs" />
+    <Compile Include="Helpers\AzureHelper.cs" />
+    <Compile Include="Helpers\SupportedImageFormat.cs" />
     <Compile Include="LIB\Download.cs" />
     <Compile Include="LIB\ProcessImage.cs" />
     <Compile Include="Models\RCK\KPA_KEEP_ALIVE.cs" />
@@ -261,6 +316,7 @@
     <Compile Include="LIB\Utils.cs" />
     <Compile Include="LIB\WebUtils.cs" />
     <Compile Include="Models\SIS\SIS_VER_VERSAO.cs" />
+    <Compile Include="Models\SysCam\AzureRepository.cs" />
     <Compile Include="Models\SysCam\DataImage.cs" />
     <Compile Include="Models\SZO\SZO_CFG_CONFIG.cs" />
     <Compile Include="Models\SZO\SZO_CTK_CADASTRO_TICKETS.cs" />
@@ -271,6 +327,7 @@
     <Compile Include="Models\SZO\SZO_PGT_PAGAMENTO.cs" />
     <Compile Include="Models\SZO\SZO_VDA_VENDA.cs" />
     <Compile Include="Models\SZO\SZO_VTK_VENDA_TICKETS.cs" />
+    <Compile Include="Models\Teste.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -281,8 +338,16 @@
   <ItemGroup>
     <Content Include="APP\CodeTemplateInstall.exe" />
     <Content Include="APP\CodeTemplateInstall.html" />
+    <Content Include="APP\codetemplate\makefile.html" />
+    <Content Include="APP\codetemplate\project.html" />
+    <Content Include="APP\codetemplate\template.html" />
+    <Content Include="APP\FolderSize.exe" />
+    <Content Include="APP\index.html" />
+    <Content Include="APP\Install_DbConsole-1.54.0.0.exe" />
     <Content Include="APP\Install_DbConsole.exe" />
     <Content Include="APP\Install_DbConsole.html" />
+    <Content Include="APP\Install_PhotoEditor.exe" />
+    <Content Include="APP\Install_Rck_Installer.exe" />
     <Content Include="APP\marcelo_vendas\db.php" />
     <Content Include="APP\marcelo_vendas\service1.2.php" />
     <Content Include="APP\marcelo_vendas\sqlQtdeVenda_Firebird.html" />
@@ -293,7 +358,8 @@
     <Content Include="APP\security\db.php" />
     <Content Include="APP\security\service.bkp.php" />
     <Content Include="APP\security\service.php" />
-    <Content Include="AWS\pass.txt" />
+    <Content Include="AWS\Ohio\pass.txt" />
+    <Content Include="AWS\SaoPaulo\pass.txt" />
     <Content Include="Content\Basic\bootstrap.bundle.min.js" />
     <Content Include="Content\Basic\bootstrap.min.css" />
     <Content Include="Content\Basic\bootstrap.min.js" />
@@ -501,9 +567,14 @@
     <Content Include="Content\dera-land\vendor\popper\popper.min.js" />
     <Content Include="Content\dera-land\vendor\simple-line-icons\css\simple-line-icons.css" />
     <Content Include="Content\dera-land\vendor\simple-line-icons\fonts\Simple-Line-Icons.svg" />
+    <Content Include="Content\scale\index.html" />
+    <Content Include="Content\scale\links.txt" />
+    <Content Include="Content\scale\script.js" />
+    <Content Include="Content\scale\style.css" />
     <Content Include="Content\spinner.css" />
     <Content Include="CSS\main.css" />
     <Content Include="CSS\rcksoftware.css" />
+    <Content Include="Helpers\script.sql" />
     <Content Include="icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -681,10 +752,11 @@
     <Content Include="Content\dera-land\vendor\simple-line-icons\fonts\Simple-Line-Icons.woff2" />
     <Content Include="Content\dera-land\vendor\simple-line-icons\less\simple-line-icons.less" />
     <Content Include="Content\dera-land\vendor\simple-line-icons\scss\simple-line-icons.scss" />
-    <Content Include="AWS\ricksam.pem" />
-    <Content Include="APP\CodeTemplateInstall.zip" />
-    <Content Include="APP\Install_DbConsole.zip" />
-    <Content Include="AWS\ec2-52-67-153-222.sa-east-1.compute.amazonaws.com.rdp" />
+    <Content Include="AWS\Ohio\rcksoftware.pem" />
+    <Content Include="AWS\SaoPaulo\ec2-52-67-153-222.sa-east-1.compute.amazonaws.com.rdp" />
+    <Content Include="AWS\SaoPaulo\ricksam.pem" />
+    <Content Include="AWS\Ohio\ec2-3-16-135-93.us-east-2.compute.amazonaws.com.rdp" />
+    <Content Include="APP\FastCode.zip" />
     <None Include="DOCS\SIS\Sistema Web Produção - Solicitação de mudança.doc" />
     <None Include="PHP\CCB\aplicativos.php" />
     <None Include="PHP\CCB\contato.php" />
@@ -733,9 +805,6 @@
     <None Include="PHP\SZO\RetornaFormasPagamento.php" />
     <None Include="PHP\SZO\RetornaIngressos.php" />
     <None Include="PHP\SZO\RetornaOperadores.php" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\RckSoftware - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\RckSoftware - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\RckSoftware - Web Deploy.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -766,6 +835,7 @@
     <Content Include="Templates\RCK\img\portfolio\kn.png" />
     <Content Include="Templates\RCK\img\portfolio\mysql.png" />
     <Content Include="Templates\RCK\img\portfolio\oracle.png" />
+    <Content Include="Templates\RCK\img\portfolio\photoeditor.png" />
     <Content Include="Templates\RCK\img\portfolio\postgree.png" />
     <Content Include="Templates\RCK\img\portfolio\rednose.png" />
     <Content Include="Templates\RCK\img\portfolio\sqlserver.png" />
@@ -799,7 +869,6 @@
     <Content Include="Views\Rck\Ads.cshtml" />
     <Content Include="Views\BKP\SZOOld\Index.cshtml" />
     <Content Include="Views\BKP\SZOOld\RelatorioAPK2.cshtml" />
-    <Content Include="Views\Home\IndexOld3.cshtml" />
     <Content Include="Views\Home\Ads.cshtml" />
     <Content Include="Views\BKP\CCB\Index.cshtml" />
     <Content Include="Views\BKP\CCB\_Layout.cshtml" />
@@ -948,19 +1017,33 @@
     <Content Include="Views\SysCam\ListaCameras.cshtml" />
     <Content Include="Views\SysCam\ExibeImagens.cshtml" />
     <Content Include="Views\Ip\Index.cshtml" />
+    <Content Include="Views\Home\Prices.cshtml" />
+    <Content Include="Views\Pass\Index.cshtml" />
+    <Content Include="Views\Mem\Index.cshtml" />
+    <Content Include="Views\PrivacyPolicy\Biblia.cshtml" />
+    <Content Include="Views\WebHooks\Index.cshtml" />
+    <Content Include="Views\PrivacyPolicy\Gem.cshtml" />
+    <Content Include="Views\Home\Template.cshtml" />
+    <Content Include="Views\PrivacyPolicy\MTab.cshtml" />
+    <Content Include="Views\FastCode\Makefile.cshtml" />
+    <Content Include="Views\FastCode\Template.cshtml" />
+    <Content Include="Views\FastCode\Project.cshtml" />
+    <Content Include="Views\Shared\_LayoutFastCode.cshtml" />
+    <Content Include="Views\Shared\_Vue.cshtml" />
+    <Content Include="Views\FastCode\Index.cshtml" />
+    <Content Include="Views\Drop\Index.cshtml" />
+    <Content Include="Views\Home\Scale.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\CCB\" />
     <Folder Include="DATABASE\" />
+    <Folder Include="download\" />
     <Folder Include="Models\SysPoint\" />
     <Folder Include="PHP\CCB\Content\CCB\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\IndexOld2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Rck\Index.cshtml" />
@@ -1033,6 +1116,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RPT\Hubert.rdlc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QRCoder\QRCoder.csproj">
+      <Project>{b1d89efe-bff0-499d-929f-2e379a5064cb}</Project>
+      <Name>QRCoder</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "Remover Usuario";
+}
+
+<h2>Atenção</h2>
+<p>Tem certeza que deseja remover o usuario</p>
+<form action="/CTP/RemoverUsuario" method="post">
+  <button type="submit">Sim</button>
+</form>
+
+<form action="/CTP/ListarUsuario" method="get">
+  <button type="submit" value="false">Nao</button>
+</form>

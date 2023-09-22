@@ -10,6 +10,16 @@
             <div class="card-body">
                 <p>Browser.IsMobileDevice: @(Request.Browser.IsMobileDevice)</p>
                 <p>@Html.Raw(ViewBag.log)</p>
+                <p>Services</p>
+                <p>/mem</p>
+                <p>/mem/text</p>
+                <p>/pass</p>
+                <p>/api/webhooks/invoke?res=ok</p>
+                <p>/api/webhooks/get</p>
+                <p>/api/webhooks/get</p>
+                <p>/api/webhooks/get</p>
+                <p>QrCodeTest: /QrCode?text=@(ViewBag.ip)&size=256&drawQuietZone=true<br /><img src="/QrCode?text=@(ViewBag.ip)&size=256&drawQuietZone=true" /></p>
+                <p>QrCodeVCardTest: /QrCode/VCard?name=person&brand=test&landline=1122223333&cellphone=11233334444&email=account@email.com&size=256&drawQuietZone=true<br /><img src="/QrCode/TestVCard" /></p>
             </div>
         </div>
 

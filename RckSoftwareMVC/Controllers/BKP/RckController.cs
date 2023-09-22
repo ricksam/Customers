@@ -88,7 +88,7 @@ namespace RckSoftwareMVC.Controllers
         [HttpGet]
         public ActionResult UrlReferrer()
         {
-            return Content((new Classes.JSON()).Serialize(Request.UrlReferrer));
+            return Content((new Helpers.JSON()).Serialize(Request.UrlReferrer));
         }
 
         public ActionResult TesteEmail()

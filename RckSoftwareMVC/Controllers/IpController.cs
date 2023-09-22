@@ -32,18 +32,29 @@ namespace RckSoftwareMVC.Controllers
 
         private string GetLog() {
             string xlog = "";
+            
+            xlog += "<h3>ServerVariables</h3>";
             foreach (var item in Request.ServerVariables)
             { xlog += "[" + item.ToString() + "]=" + Request[item.ToString()] + " <br /> "; }
-            //ViewBag.html = xlog;
+            
+            xlog += "<h3>QueryString</h3>";
+            foreach (var item in Request.QueryString)
+            { xlog += "[" + item.ToString() + "]=" + Request.QueryString[item.ToString()] + " <br /> "; }
+
+            xlog += "<h3>Form</h3>";
+            foreach (var item in Request.Form)
+            { xlog += "[" + item.ToString() + "]=" + Request.Form[item.ToString()] + " <br /> "; }
+
             xlog += "Now: " + DateTime.Now + " <br />Utc: " + DateTime.UtcNow;
+
             return xlog;
         }
 
-        public ActionResult MySql() {
+        /*public ActionResult MySql() {
             System.Data.IDbConnection _conn = new MySql.Data.MySqlClient.MySqlConnection("Server=18.229.3.93;Database=gem;Uid=admin;Pwd=RCK6px2erjr;");
             _conn.Open();
             _conn.Close();
             return Content(_conn.State.ToString());
-        }
+        }*/
     }
 }

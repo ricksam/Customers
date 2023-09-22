@@ -9,12 +9,12 @@ namespace lib.Class
   public static class Utils
   {
     #region public static lib.Class.Conversion getAppConfig(string CfgName)
-    public static Conversion getAppConfig(string CfgName)
+    /*public static Conversion getAppConfig(string CfgName)
     {
       try
       { return new Conversion(System.Configuration.ConfigurationSettings.AppSettings[CfgName]); }
       catch { return new Conversion(""); }
-    }
+    }*/
     #endregion
 
     #region public static bool ValidateCPF(string CPF)

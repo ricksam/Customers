@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using RckSoftware;
+using RckSoftwareMVC.Helpers;
 
 namespace RckSoftwareMVC.Models.SysCam
 {
@@ -18,12 +18,13 @@ namespace RckSoftwareMVC.Models.SysCam
             { cx = new Context(); }
 
             if (cx.ConnectionType() == typeof(System.Data.SqlClient.SqlConnection)) {
-                return cx.Query<string>(
+                string[] dates = cx.Query<string>(
                 string.Format(@"select 
                         top {0}
-                       date
+                       convert(varchar, date, 3)
                     from DataImage 
                     group by date", count)).ToArray();
+                return dates;
             }
 
             if (cx.ConnectionType() == typeof(MySql.Data.MySqlClient.MySqlConnection)) {
@@ -135,7 +136,7 @@ namespace RckSoftwareMVC.Models.SysCam
                        ,camera 
                        ,date 
                     from DataImage
-                    where date = @date and camera = @camera and id > @id", count)
+                    where convert(varchar, date, 3) = @date and camera = @camera and id > @id", count)
                     , new { date, camera, id }).ToList();
             }
 
@@ -147,7 +148,7 @@ namespace RckSoftwareMVC.Models.SysCam
                        ,camera 
                        ,date 
                     from DataImage
-                    where date = @date and camera = @camera and id > @id
+                    where convert(varchar, date, 3) = @date and camera = @camera and id > @id
                     limit {0}", count)
                     , new { date, camera, id }).ToList();
             }
@@ -207,7 +208,7 @@ namespace RckSoftwareMVC.Models.SysCam
             if (cx == null)
             { cx = new Context(); }
 
-            cx.Execute(@"delete from DataImage where date = @date", new { date });
+            cx.Execute(@"delete from DataImage where date = @date", new { date = Convert.ToDateTime(date).ToString("yyyy-MM-dd") });
         }
     }
 }

@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>jQuery UI Datapicker pt-br exemplo</title>
+		<link type="text/css" href="datepicker.css" rel="stylesheet" />
+		<script type="text/javascript" src="../jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="../jquery-ui-1.8.20.custom.min.js"></script>
+		
+		<script type="text/javascript">
+			$(document).ready(function(){
+				 	$(".data").datepicker({
+						dateFormat: 'dd/mm/yy',
+						dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
+						dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+						dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+						monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+						monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+						nextText: 'Próximo',
+						prevText: 'Anterior'
+					});
+			});
+		</script>
+		
+	</head>
+	<body>
+		<input type="text" class="data" />
+
+	</body>
+</html>

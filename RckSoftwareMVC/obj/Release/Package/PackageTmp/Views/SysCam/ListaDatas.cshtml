@@ -3,10 +3,16 @@
     Layout = null;
 }
 
-<h3>Datas</h3>
-<ul class="list-group">
-    @foreach (var item in Model)
-    {
-        <li onclick="SelecionaData('@(item)')" class="list-group-item list-group-item-action @(ViewBag.data != null && ViewBag.data == item?"active":"")">@(item)</li>
-    }
-</ul>
+<div class="form-group">
+    <label>Datas</label>
+    <ul class="list-group">
+        @foreach (var item in Model)
+        {
+        <li onclick="SelecionaData('@(item)')" class="list-group-item list-group-item-action @(ViewBag.data != null && ViewBag.data == item?"active":"")">
+            <input name="datas" type="hidden" value="@(Convert.ToDateTime( item).ToString("dd/MM/yyyy"))" />
+            @(Convert.ToDateTime( item).ToString("dd/MM/yyyy"))
+        </li>
+        }
+    </ul>
+
+</div>

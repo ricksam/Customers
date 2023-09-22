@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container text-white">
+    <h2>Senhas</h2>
+
+    <div class="my-2">
+        <label>Site</label>
+        <input class="form-control" id="site" name="site" />
+    </div>
+
+    <div class="my-2">
+        <label>Chave</label>
+        <input class="form-control" type="password" id="chave" name="chave" />
+    </div>
+
+    <div class="my-2">
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="maiuscula" name="maiuscula" checked="checked">
+            <label class="custom-control-label" for="maiuscula">Letras maiuscula</label>
+        </div>
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="minuscula" name="minuscula" checked="checked">
+            <label class="custom-control-label" for="minuscula">Letras minúscula</label>
+        </div>
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="numeros" name="numeros" checked="checked">
+            <label class="custom-control-label" for="numeros">Números</label>
+        </div>
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="especial" name="especial" checked="checked">
+            <label class="custom-control-label" for="especial">Caracter especial</label>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="gerar()">Gerar</button>
+
+    <div class="my-2">
+        <span class="form-control form-control-lg" id="res"></span>
+    </div>
+
+</div>
+
+@section scripts{
+    <script>
+        function gerar() {
+            const site = $("#site").val();
+            const chave = $("#chave").val();
+            const maiuscula = $("#maiuscula")[0].checked;
+            const minuscula = $("#minuscula")[0].checked;
+            const numeros = $("#numeros")[0].checked;
+            const especial = $("#especial")[0].checked;
+            rsp.post({ site, chave, maiuscula, minuscula, numeros, especial }, "/Pass/Gerar", (res) => {
+                $("#res").html(res);
+            })
+        }
+    </script>
+}

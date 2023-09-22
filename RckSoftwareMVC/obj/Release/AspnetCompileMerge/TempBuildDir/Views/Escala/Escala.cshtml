@@ -1,0 +1,43 @@
+﻿@model RckSoftwareMVC.Controllers.Escala
+@{
+    Layout = null;
+}
+
+<div class="card">
+    <div class="card-body">
+        <div><h4 class="text-center">CONGREGAÇÃO CRISTÃ NO BRASIL</h4>
+             <h5 class="text-center">Escala de Organistas</h5></div>
+
+        <div class="row">
+
+            @foreach (var item in Model.ListaEscala().GroupBy(q => q.Data.Month).ToList())
+            {
+                @Html.Action("Mes", "Escala", new { escala = Model, Mes = item.Key })
+            }
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    .table td, .table th {
+        font-size: 10pt;
+    }
+
+</style>
+
+
+<style type="text/css" media="print">
+    .table td {
+        font-size: 8pt;
+    }
+
+    #filtros {
+    }
+
+    #voltar {
+        position: absolute;
+        height: 0px;
+        width: 0px;
+    }
+</style>
+

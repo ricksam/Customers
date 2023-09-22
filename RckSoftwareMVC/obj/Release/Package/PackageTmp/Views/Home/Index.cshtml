@@ -79,6 +79,9 @@
                     <li class="page-scroll">
                         <a href="#contact">Contato</a>
                     </li>
+                    <li class="page-scroll">
+                        <a href="/Home/Prices">Preços</a>
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -110,10 +113,21 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-lg-offset-2">
+                <div class="col-lg-4">
+                    <p>
+                        <img alt="photo_editor" class="img-logo-ex" src="../../Templates/RCK/img/portfolio/photoeditor.png" />
+                        <a target="_blank" href="//rcksoftware.azurewebsites.net/app/Install_PhotoEditor.exe?v=1.0">
+                            Editor de Fotos
+                        </a>
+                    </p>
+                    <p>
+                        Software (free) que permite editar multiplas photos utilizando filtros personalizados.
+                    </p>
+                </div>
+                <div class="col-lg-4">
                     <p>
                         <img alt="dbconsole" class="img-logo-ex" src="../../Templates/RCK/img/portfolio/dbconsole.png" />
-                        <a target="_blank" href="//rcksoftware.azurewebsites.net/app/Install_DbConsole.exe">
+                        <a target="_blank" href="//rcksoftware.azurewebsites.net/app/Install_DbConsole.exe?v=1.50">
                             DbConsole
                         </a>
                     </p>
@@ -515,7 +529,7 @@
                                 <li class="list-group-item">
                                     <p>
                                         <img alt="dbconsole" class="img-logo-ex" src="../../Templates/RCK/img/portfolio/dbconsole.png" />
-                                        <a target="_blank" href="//rcksoftware.azurewebsites.net/app/Install_DbConsole.exe">
+                                        <a target="_blank" href="//rcksoftware.azurewebsites.net/app/Install_DbConsole.exe?v=1.50">
                                             DbConsole
                                         </a>
                                     </p>
@@ -729,11 +743,9 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        //console.log("location:", location);
-        if (location.protocol != 'https:' && location.hostname != "localhost") {
-            location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
-            //console.log("location.href:", location.href);
-        }
+        //if (location.protocol != 'https:' && location.hostname != "localhost") {
+          //  location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+        //}
     })
 
     var _gaq = _gaq || [];

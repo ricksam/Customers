@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap core CSS -->
+    
+    <link href="~/Content/Basic/bootstrap.min.css" rel="stylesheet" />
+    <link href="../../Templates/bootstrap-3.3.6/sticky-footer-navbar.css" rel="stylesheet"
+        type="text/css" />
+    <link href="~/Content/spinner.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-datepicker-1.6.4-dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    @RenderBody()
+
+    <div id="spinner" class="spinner">
+    </div>
+
+    <script src="~/Content/Basic/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/Basic/bootstrap.min.js"></script>
+    <script src="~/Content/Basic/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/bootstrap-datepicker-1.6.4-dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/Content/bootstrap-datepicker-1.6.4-dist/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+    <script src="~/Scripts/rsp.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            rsp.loader(ShowSpinner, HideSpinner);
+            //ShowSpinner();
+            //HideSpinner();
+        });
+
+        function ShowSpinner() {
+            $('#spinner').addClass('show-spinner');
+        }
+
+        function HideSpinner() {
+            $('#spinner').removeClass('show-spinner');
+        }
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

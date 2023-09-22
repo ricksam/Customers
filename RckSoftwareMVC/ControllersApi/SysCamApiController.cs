@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace RckSoftwareMVC.ControllersApi
 {
     public class SysCamApiController : ApiController
     {
-        //private const string SENDIMAGE = "method=send_image&{0}&authenticate={1}&camera={2}";
-        //private const string DELETEIMAGE = "method=delete_image&date={0}&authenticate={1}";
-        //private const string COUNTFRAMES = "method=count_frames&authenticate={0}&camera={1}";
-        //private const string LISTIMAGE = "method=list_image&lastdate={0}&count={1}&code={2}&authenticate={3}&camera={4}";
-        //private const string LISTDATE = "method=list_date&count={0}&authenticate={1}";
-        //private const string LISTCAMERAS = "method=list_cameras&authenticate={0}";
-        //public const string LASTIMAGE = "method=last_image&authenticate={0}";
-
         public static System.Runtime.Caching.ObjectCache Cache { get { return System.Runtime.Caching.MemoryCache.Default; } }
 
         public List<RckSoftwareMVC.Models.SysCam.DataImage> Images {

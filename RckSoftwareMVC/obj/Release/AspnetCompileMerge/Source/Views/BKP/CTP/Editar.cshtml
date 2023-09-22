@@ -1,0 +1,33 @@
+﻿@model RckSoftwareMVC.CTP_AUT_AUTORIZADOS
+@{
+    ViewBag.Title = "Editar";
+}
+
+<form action="/CTP/Editar" method="post">
+<p>Informe os dados do visitante</p>
+@Html.Raw(ViewBag.msg)
+<input type="hidden" name="AUT_CODIGO" value="@(Model.AUT_CODIGO)" />
+<input type="hidden" name="AUT_HASHMD5" value="@(Model.AUT_HASHMD5)" />
+<input type="text" name="AUT_NOME" placeholder="Nome" value="@(Model.AUT_NOME)" /><br />
+<input type="text" name="AUT_TITULO" placeholder="Título" value="@(Model.AUT_TITULO)" /><br />
+<input type="text" name="AUT_DOCUMENTO" placeholder="Documento" value="@(Model.AUT_DOCUMENTO)" /><br />
+<input type="text" name="AUT_VEICULO" placeholder="Veículo" value="@(Model.AUT_VEICULO)" /><br />
+<input type="text" name="AUT_PLACA" placeholder="Placa" value="@(Model.AUT_PLACA)" /><br />
+<p>Liberar acesso:
+<input type="text" class="s3 data_hora" name="AUT_DATADE" placeholder="De" value="@(Model.AUT_DATADE == DateTime.MinValue ? "" : Model.AUT_DATADE.ToString("dd/MM/yyyy HH:mm"))" /><br />
+<input type="text" class="s3 data_hora" name="AUT_DATAATE" placeholder="até" value="@(Model.AUT_DATAATE == DateTime.MinValue ? "" : Model.AUT_DATAATE.ToString("dd/MM/yyyy HH:mm"))" /><br />
+<input type="checkbox" name="AUT_PRE_AUTORIZADO" value="true" @(Model.AUT_PRE_AUTORIZADO?"checked=\"checked\"":"") /> Pré autorizado 
+</p>
+<button type="submit">Salvar</button><br />
+<a href="/CTP/Listar">Voltar</a>
+</form>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $(".cpf").mask("999.999.999-99");
+    $(".telefone").mask("(99)?999999999");
+    $(".data").mask("99/99/9999");
+    $(".data_hora").mask("99/99/9999 99:99");
+    $(".hora").mask("99:99");
+  });
+</script>

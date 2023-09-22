@@ -1,0 +1,34 @@
+D:/TESTS/QRCoder-master/QRCoder-master/QRCoder/bin/Debug/netstandard2.0/QRCoder.deps.json
+D:/TESTS/QRCoder-master/QRCoder-master/QRCoder/bin/Debug/netstandard2.0/QRCoder.dll
+D:/TESTS/QRCoder-master/QRCoder-master/QRCoder/bin/Debug/netstandard2.0/QRCoder.pdb
+D:/TESTS/QRCoder-master/QRCoder-master/QRCoder/obj/Debug/netstandard2.0/QRCoder.csprojAssemblyReference.cache
+D:/TESTS/QRCoder-master/QRCoder-master/QRCoder/obj/Debug/netstandard2.0/QRCoder.dll
+D:/TESTS/QRCoder-master/QRCoder-master/QRCoder/obj/Debug/netstandard2.0/QRCoder.pdb
+D:/PROJECTS/BlueCore/Kroton/SignatureGenerator/QRCoder/bin/Debug/netstandard2.0/QRCoder.deps.json
+D:/PROJECTS/BlueCore/Kroton/SignatureGenerator/QRCoder/bin/Debug/netstandard2.0/QRCoder.dll
+D:/PROJECTS/BlueCore/Kroton/SignatureGenerator/QRCoder/bin/Debug/netstandard2.0/QRCoder.pdb
+D:/PROJECTS/BlueCore/Kroton/SignatureGenerator/QRCoder/obj/Debug/netstandard2.0/QRCoder.csprojAssemblyReference.cache
+D:/PROJECTS/BlueCore/Kroton/SignatureGenerator/QRCoder/obj/Debug/netstandard2.0/QRCoder.dll
+D:/PROJECTS/BlueCore/Kroton/SignatureGenerator/QRCoder/obj/Debug/netstandard2.0/QRCoder.pdb
+/Volumes/Google Drive/Santi Family Dropbox/Rubens Santi/Work/projetosWeb/Kroton-SignatureGenerator/QRCoder/bin/Debug/netstandard2.0/QRCoder.deps.json
+/Volumes/Google Drive/Santi Family Dropbox/Rubens Santi/Work/projetosWeb/Kroton-SignatureGenerator/QRCoder/bin/Debug/netstandard2.0/QRCoder.dll
+/Volumes/Google Drive/Santi Family Dropbox/Rubens Santi/Work/projetosWeb/Kroton-SignatureGenerator/QRCoder/bin/Debug/netstandard2.0/QRCoder.pdb
+/Volumes/Google Drive/Santi Family Dropbox/Rubens Santi/Work/projetosWeb/Kroton-SignatureGenerator/QRCoder/obj/Debug/netstandard2.0/QRCoder.csprojAssemblyReference.cache
+/Volumes/Google Drive/Santi Family Dropbox/Rubens Santi/Work/projetosWeb/Kroton-SignatureGenerator/QRCoder/obj/Debug/netstandard2.0/QRCoder.csproj.CoreCompileInputs.cache
+/Volumes/Google Drive/Santi Family Dropbox/Rubens Santi/Work/projetosWeb/Kroton-SignatureGenerator/QRCoder/obj/Debug/netstandard2.0/QRCoder.dll
+/Volumes/Google Drive/Santi Family Dropbox/Rubens Santi/Work/projetosWeb/Kroton-SignatureGenerator/QRCoder/obj/Debug/netstandard2.0/QRCoder.pdb
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\bin\Debug\netstandard2.0\QRCoder.deps.json
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\bin\Debug\netstandard2.0\QRCoder.dll
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\bin\Debug\netstandard2.0\QRCoder.pdb
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\obj\Debug\netstandard2.0\QRCoder.dll
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\obj\Debug\netstandard2.0\QRCoder.pdb
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\obj\Debug\netstandard2.0\QRCoder.csprojAssemblyReference.cache
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\obj\Debug\netstandard2.0\QRCoder.csproj.CoreCompileInputs.cache
+D:\PROJECTS\RckSoftware\Customers\QRCoder\bin\Debug\netstandard2.0\QRCoder.deps.json
+D:\PROJECTS\RckSoftware\Customers\QRCoder\bin\Debug\netstandard2.0\QRCoder.dll
+D:\PROJECTS\RckSoftware\Customers\QRCoder\bin\Debug\netstandard2.0\QRCoder.pdb
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Debug\netstandard2.0\QRCoder.csproj.AssemblyReference.cache
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Debug\netstandard2.0\QRCoder.GeneratedMSBuildEditorConfig.editorconfig
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Debug\netstandard2.0\QRCoder.csproj.CoreCompileInputs.cache
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Debug\netstandard2.0\QRCoder.dll
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Debug\netstandard2.0\QRCoder.pdb

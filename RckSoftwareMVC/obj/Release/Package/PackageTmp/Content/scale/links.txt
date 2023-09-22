@@ -1,0 +1,5 @@
+https://www.treinaweb.com.br/blog/gerando-sons-com-a-web-audio-api-do-javascript
+
+https://alemangui.github.io/pizzicato/
+
+https://www.descomplicandoamusica.com/matematica-na-musica/

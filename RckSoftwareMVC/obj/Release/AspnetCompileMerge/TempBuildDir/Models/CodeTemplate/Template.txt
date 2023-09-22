@@ -1,0 +1,57 @@
+ using System;
+ using System.Data;
+ using System.Collections.Generic;
+ using System.Text;
+ using lib.Class;
+ using lib.Database;
+ using lib.Database.MVC;
+ using lib.Database.Drivers;
+ 
+ namespace [NameSpace]
+ {
+   public partial class [Table] : DefaultEntity
+   {          
+     public int [PrimaryKey] { get; set; }
+*    public [Type] [Field] { get; set; }
+   }
+ 
+   public partial class ds[Table] : DefaultDataSource<[Table]>
+   {     
+     public ds[Table](Connection cnn, SqlBuild sb)
+       : base(cnn, sb)
+     { }
+     
+     public [Table] Get(int id)
+     {
+       return Get("select * from [Table] where [PrimaryKey] = " + id.ToString());
+     } 
+               
+     public bool Save([Table] Tab)
+     {
+       if (GetLockedFields(Tab).Length != 0)
+       { return false; }
+      
+       this.sb.Clear();
+       this.sb.Table = "[Table]";
+*      this.sb.AddField("[Field]", Tab.[Field][SizeString][TypeDateTime]);      
+     
+       bool Gravou = false;   
+       if(Tab.[PrimaryKey] == 0)
+       {
+         Gravou = this.cnn.Exec(this.sb.getInsert());
+         Tab.[PrimaryKey] = this.cnn.GetLastId().ToInt(); 
+       }
+       else
+       { Gravou = this.cnn.Exec(this.sb.getUpdate("where [PrimaryKey] = " + Tab.[PrimaryKey])); }       
+       
+       return Gravou;
+     }
+     
+     public bool Remove(int [PrimaryKey])
+     {
+       this.sb.Clear();
+       this.sb.Table = "[Table]";
+       return this.cnn.Exec(this.sb.getDelete("where [PrimaryKey] = " + [PrimaryKey]));
+     }
+   }
+ }

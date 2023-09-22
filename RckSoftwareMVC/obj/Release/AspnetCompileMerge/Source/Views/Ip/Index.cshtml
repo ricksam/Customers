@@ -1,0 +1,25 @@
+﻿@{ 
+
+  
+}
+    <div class="container">
+        <div class="card form-group">
+            <div class="card-header">
+                <h1 class="text-center">@(ViewBag.ip)</h1>
+            </div>
+            <div class="card-body">
+                <p>Browser.IsMobileDevice: @(Request.Browser.IsMobileDevice)</p>
+                <p>@Html.Raw(ViewBag.log)</p>
+                <p>Services</p>
+                <p>/mem</p>
+                <p>/pass</p>
+                <p>/api/webhooks/invoke?res=ok</p>
+                <p>/api/webhooks/get</p>
+                <p>/api/webhooks/get</p>
+                <p>/api/webhooks/get</p>
+            </div>
+        </div>
+
+
+    </div>
+

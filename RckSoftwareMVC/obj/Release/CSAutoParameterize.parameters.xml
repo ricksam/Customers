@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="DefaultConnection-Web.config Connection String" description="DefaultConnection A Cadeia de Conexão usada em web.config pelo aplicativo para acessar o banco de dados." defaultValue="Data Source=.\SQLEXPRESS;Initial Catalog=aspnet-RckSoftwareMVC-20130509100012;Integrated Security=SSPI" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="D:\\PROJECTS\\RckSoftware\\Customers\\RckSoftwareMVC\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='DefaultConnection']/@connectionString" />
+  </parameter>
+  <parameter name="RCKConnection-Web.config Connection String" description="RCKConnection A Cadeia de Conexão usada em web.config pelo aplicativo para acessar o banco de dados." defaultValue="Server=187.45.196.220;Database=rcksoftware;Uid=rcksoftware;Pwd=RCK6px2erjr;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="D:\\PROJECTS\\RckSoftware\\Customers\\RckSoftwareMVC\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='RCKConnection']/@connectionString" />
+  </parameter>
+</parameters>

@@ -46,10 +46,12 @@ namespace lib.Class
     #region public void SendMail(string StringMessage = null,bool IsBodyHtml, string To = null, string Subject = null, string[] Cc = null, string[] Bcc = null, List<string> AttachamentsFile = null)
     public void SendMail(string StringMessage, bool IsBodyHtml, string To, string Subject, string[] Cc = null, string[] Bcc = null, List<string> AttachamentFiles = null) {
         List<Attachment> list = new List<Attachment>();
-        foreach (var item in AttachamentFiles)
-        {
-            list.Add(new Attachment(item));
-        }
+            if (AttachamentFiles != null) {
+                foreach (var item in AttachamentFiles)
+                {
+                    list.Add(new Attachment(item));
+                }
+            }
 
         SendMailA(StringMessage, IsBodyHtml, To, Subject, Cc, Bcc, list);
     }
@@ -64,7 +66,9 @@ namespace lib.Class
         mail.IsBodyHtml = IsBodyHtml;
         mail.Body = StringMessage;
         if (!string.IsNullOrEmpty(this.ReplayTo))
-        { mail.ReplyTo = new MailAddress(this.ReplayTo); }
+        { 
+                    //mail.ReplyTo = new MailAddress(this.ReplayTo);
+                }
 
         if (AttachamentFiles != null)
         {
@@ -105,8 +109,9 @@ namespace lib.Class
       SmtpClient smtp = new SmtpClient();
       try
       {
-        
-        if (this.Port == 0)
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+                if (this.Port == 0)
         { smtp = new SmtpClient(this.SMTPClient); }
         else { smtp = new SmtpClient(this.SMTPClient, Port); }
 

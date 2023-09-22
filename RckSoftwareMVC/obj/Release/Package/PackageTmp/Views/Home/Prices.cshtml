@@ -1,0 +1,72 @@
+﻿@{
+    decimal SalarioMinimo = 1300M;
+    decimal Servidor = SalarioMinimo / 4;
+    decimal ServidorApi = SalarioMinimo / 2;
+    decimal Desenho = SalarioMinimo / 2;
+    decimal TarefaCadastro = SalarioMinimo / 8;
+    decimal TarefaOperacao = SalarioMinimo / 4;
+    decimal PrimeniroMes = Desenho + Servidor + (TarefaCadastro * 4) + (TarefaOperacao * 1);
+}
+<div class="container">
+    <div class="card form-group">
+        <div class="card-header">
+            <h1 class="text-center">Preços</h1>
+        </div>
+        <div class="card-body">
+            <table class="table">
+
+                <tr>
+                    <td>Servidor (site+banco):</td>
+                    <td>R$ @(Servidor.ToString("#,##0.00")) (mês)</td>
+                </tr>
+                <tr>
+                    <td>Servidor (site+banco+api):</td>
+                    <td>R$ @(ServidorApi.ToString("#,##0.00")) (mês)</td>
+                </tr>
+                <tr>
+                    <td>Desenho do projeto:</td>
+                    <td>R$ @(Desenho.ToString("#,##0.00"))</td>
+                </tr>
+                <tr>
+                    <td>Tarefa ou sessão da página (cadastro):</td>
+                    <td>R$ @(TarefaCadastro.ToString("#,##0.00"))</td>
+                </tr>
+                <tr>
+                    <td>Tarefa ou sessão da página (operacional):</td>
+                    <td>R$ @(TarefaOperacao.ToString("#,##0.00"))</td>
+                </tr>
+            </table>
+            <h3>Exemplo</h3>
+            <p>
+                Sistema de venda de produtos<br />
+                Tarefas:
+            <p>
+                <ul>
+
+                    <li>
+                        Listagem+remoção de produtos, (cad)
+                    </li>
+                    <li>
+                        inserção + edição do produto, (cad)
+                    </li>
+                    <li>
+                        tela de venda, (cad)
+                    </li>
+                    <li>
+                        relatório de produtos vendidos, (op)
+                    </li>
+                    <li>
+                        login operador (fixo)  (cad)
+                    </li>
+                </ul>
+                <br />
+                Total de 4 tarefas cadastro = R$ @((TarefaCadastro*4).ToString("#,##0.00"))<br />
+                Total de 1 tarefas operacionais = R$ @((TarefaOperacao*1).ToString("#,##0.00"))<br />
+                Projeto: R$ @(Desenho.ToString("#,##0.00"))<br />
+                Servidor: R$ @(Servidor.ToString("#,##0.00")) (mês)<br />
+                Total no primeiro mês: R$ @(PrimeniroMes.ToString("#,##0.00"))
+            </p>
+        </div>
+    </div>
+</div>
+

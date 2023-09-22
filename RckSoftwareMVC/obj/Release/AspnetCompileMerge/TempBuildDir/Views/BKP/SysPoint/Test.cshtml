@@ -1,0 +1,230 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<div id="main" class="container">
+
+    <button class="btn btn-default start" id="startFull">Clique aqui para Iniciar</button>
+
+    <div id="Programa" >
+        <h2>
+            GPS
+        </h2>
+        <button class="btn btn-default" id="askButton">
+            Clique para testar o GPS
+        </button>
+        
+        <div id="gps_target" style="overflow: scroll; height: 90px;">
+        </div>
+        <h2>
+            Camera
+        </h2>
+        <p>
+            <button class="btn btn-lg btn-default" onclick="getStream()">
+                Ligar a câmera
+            </button>
+        </p>
+        <p>
+            <video autoplay style="height: 180px; width: 240px;"></video>
+        </p>
+        <p>
+            <button class="btn btn-lg btn-default" onclick="takePhoto()">
+                Tirar Foto!
+            </button>
+        </p>
+        <p>
+            <img id="imageTag" width="240" height="180">
+        </p>
+
+        <p>
+            <button class="btn btn-default" id="exit" style="display:none">Exit fullscreen</button>
+        </p>
+        <p id="logTarget"></p>
+    </div>
+
+    
+</div>
+
+@section Scripts{
+    
+    <script type="text/javascript">
+
+        var gps_target = document.getElementById('gps_target');
+        var watchId;
+
+        function appendLocation(location, verb) {
+            verb = verb || 'updated';
+            var newLocation = document.createElement('p');
+            newLocation.innerHTML = 'Location ' + verb + ': <a href="https://maps.google.com/maps?&z=15&q=' + location.coords.latitude + '+' + location.coords.longitude + '&ll=' + location.coords.latitude + '+' + location.coords.longitude + '" target="_blank">' + location.coords.latitude + ', ' + location.coords.longitude + '</a>';
+            gps_target.appendChild(newLocation);
+        }
+
+        if ('geolocation' in navigator) {
+            document.getElementById('askButton').addEventListener('click', function () {
+                navigator.geolocation.getCurrentPosition(function (location) {
+                    appendLocation(location, 'fetched');
+                });
+                watchId = navigator.geolocation.watchPosition(appendLocation);
+            });
+        } else {
+            gps_target.innerText = 'Geolocation API not supported.';
+        }
+
+
+    </script>
+    <script type="text/javascript">
+        function getUserMedia(options, successCallback, failureCallback) {
+            var api = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia || navigator.msGetUserMedia;
+            if (api) {
+                return api.bind(navigator)(options, successCallback, failureCallback);
+            }
+        }
+
+        var theStream;
+
+        function getStream() {
+            if (!navigator.getUserMedia && !navigator.webkitGetUserMedia &&
+                !navigator.mozGetUserMedia && !navigator.msGetUserMedia) {
+                alert('User Media API not supported.');
+                return;
+            }
+
+            var constraints = {
+                video: true
+            };
+
+            getUserMedia(constraints, function (stream) {
+                var mediaControl = document.querySelector('video');
+                if ('srcObject' in mediaControl) {
+                    mediaControl.srcObject = stream;
+                    mediaControl.src = (window.URL || window.webkitURL).createObjectURL(stream);
+                } else if (navigator.mozGetUserMedia) {
+                    mediaControl.mozSrcObject = stream;
+                }
+                theStream = stream;
+            }, function (err) {
+                alert('Error: ' + err);
+            });
+        }
+
+        function takePhoto() {
+            if (!('ImageCapture' in window)) {
+                alert('ImageCapture is not available');
+                return;
+            }
+
+            if (!theStream) {
+                alert('Grab the video stream first!');
+                return;
+            }
+
+            var theImageCapturer = new ImageCapture(theStream.getVideoTracks()[0]);
+
+            theImageCapturer.takePhoto()
+                .then(blob => {
+                    var theImageTag = document.getElementById("imageTag");
+                    theImageTag.src = URL.createObjectURL(blob);
+                })
+                .catch(err => alert('Error: ' + err));
+        }
+    </script>
+
+    <script type="text/javascript">
+        var doc = document.querySelector.bind(document);
+        var sel = function (selector) {
+            return [].slice.call(document.querySelectorAll(selector), 0);
+        }
+        //var logTarget = doc('#logTarget');
+
+        function logChange(event) {
+            var timeBadge = new Date().toTimeString().split(' ')[0];
+            var newState = document.createElement('p');
+            newState.innerHTML = '<span class="badge">' + timeBadge + '</span> ' + event + '.';
+            //logTarget.appendChild(newState);
+        }
+
+        var prefix = null;
+        if ('requestFullscreen' in document.documentElement) {
+            prefix = 'fullscreen';
+        } else if ('mozRequestFullScreen' in document.documentElement) {
+            prefix = 'mozFullScreen';
+        } else if ('webkitRequestFullscreen' in document.documentElement) {
+            prefix = 'webkitFullscreen';
+        } else if ('msRequestFullscreen') {
+            prefix = 'msFullscreen';
+        }
+
+        var onFullscreenChange = function () {
+            var elementName = 'not set';
+            if (document[prefix + 'Element']) {
+                elementName = document[prefix + 'Element'].nodeName;
+            }
+            logChange('New fullscreen element is <b>' + elementName + '</b>');
+            onFullscreenHandler(!!document[prefix + 'Element']);
+        }
+
+        if (document[prefix + 'Enabled']) {
+            var onFullscreenHandler = function (started) {
+                doc('#exit').style.display = started ? 'inline-block' : 'none';
+                sel('.start').forEach(function (x) {
+                    x.style.display = started ? 'none' : 'inline-block';
+                });
+            };
+
+            document.addEventListener(prefix.toLowerCase() + 'change', onFullscreenChange);
+
+            var goFullScreen = null;
+            var exitFullScreen = null;
+            if ('requestFullscreen' in document.documentElement) {
+                goFullScreen = 'requestFullscreen';
+                exitFullScreen = 'exitFullscreen';
+            } else if ('mozRequestFullScreen' in document.documentElement) {
+                goFullScreen = 'mozRequestFullScreen';
+                exitFullScreen = 'mozCancelFullScreen';
+            } else if ('webkitRequestFullscreen' in document.documentElement) {
+                goFullScreen = 'webkitRequestFullscreen';
+                exitFullScreen = 'webkitExitFullscreen';
+            } else if ('msRequestFullscreen') {
+                goFullScreen = 'msRequestFullscreen';
+                exitFullScreen = 'msExitFullscreen';
+            }
+
+            var goFullscreenHandler = function (element) {
+                return function () {
+                    var maybePromise = element[goFullScreen]();
+                    if (maybePromise && maybePromise.catch) {
+                        maybePromise.catch(function (err) {
+                            logChange('Cannot acquire fullscreen mode: ' + err);
+                        });
+                    }
+                };
+            };
+
+            //doc('#startFull').addEventListener('click', goFullscreenHandler(document.documentElement));
+            doc('#startFull').addEventListener('click', function () { goFullscreen(document.documentElement)});
+            //doc('#startBox').addEventListener('click', goFullscreenHandler(doc('#box')));
+
+            doc('#exit').addEventListener('click', function () {
+                document[exitFullScreen]();
+            });
+        }
+
+        function goFullscreen(element) {
+
+            $('#Programa').css("display", "block");
+
+                var maybePromise = element[goFullScreen]();
+                if (maybePromise && maybePromise.catch) {
+                    maybePromise.catch(function (err) {
+                        logChange('Cannot acquire fullscreen mode: ' + err);
+                    });
+                }
+            
+        }
+
+        //goFullscreen(document.documentElement);
+    </script>
+
+
+}
+

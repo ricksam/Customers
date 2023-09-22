@@ -1,0 +1,17 @@
+D:\PROJECTS\BlueCore\Kroton\SignatureGenerator\QRCoder\bin\Release\net40\QRCoder.dll
+D:\PROJECTS\BlueCore\Kroton\SignatureGenerator\QRCoder\bin\Release\net40\QRCoder.pdb
+D:\PROJECTS\BlueCore\Kroton\SignatureGenerator\QRCoder\obj\Release\net40\QRCoder.csprojAssemblyReference.cache
+D:\PROJECTS\BlueCore\Kroton\SignatureGenerator\QRCoder\obj\Release\net40\QRCoder.dll
+D:\PROJECTS\BlueCore\Kroton\SignatureGenerator\QRCoder\obj\Release\net40\QRCoder.pdb
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\bin\Release\net40\QRCoder.dll
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\bin\Release\net40\QRCoder.pdb
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\obj\Release\net40\QRCoder.csprojAssemblyReference.cache
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\obj\Release\net40\QRCoder.dll
+D:\PROJECTS\BlueCore\Kroton\Kroton-SignatureGenerator\QRCoder\obj\Release\net40\QRCoder.pdb
+D:\PROJECTS\RckSoftware\Customers\QRCoder\bin\Release\net40\QRCoder.dll
+D:\PROJECTS\RckSoftware\Customers\QRCoder\bin\Release\net40\QRCoder.pdb
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Release\net40\QRCoder.csproj.AssemblyReference.cache
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Release\net40\QRCoder.GeneratedMSBuildEditorConfig.editorconfig
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Release\net40\QRCoder.csproj.CoreCompileInputs.cache
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Release\net40\QRCoder.dll
+D:\PROJECTS\RckSoftware\Customers\QRCoder\obj\Release\net40\QRCoder.pdb

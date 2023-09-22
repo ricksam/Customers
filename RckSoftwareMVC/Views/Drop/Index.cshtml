@@ -1,0 +1,45 @@
+﻿@model string[]
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container text-light">
+    <div class="page-header">
+        <h2>Arquivos</h2>
+    </div>
+
+
+    @foreach (var item in Model)
+    {
+        <p><a class="btn btn-secondary" href="/download/@(item)">@item</a>  <button class="btn btn-danger" onclick="RemoveFile('@(item)')">-</button></p>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+
+            <form action="/Drop/AddFile" enctype="multipart/form-data" method="post" onsubmit="rsp.loaderOn()">
+                <div class="form-group">
+                    <label>Enviar um novo arquivo</label>
+                    <input type="file" name="file" class="form-control" />
+                </div>
+
+                <button class="btn btn-primary" type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+
+@section scripts{
+    <script type="text/javascript">
+        function RemoveFile(file) {
+            rsp.post({ file }, "/Drop/RemoveFile", function () {
+                window.location = "/Drop/Index";
+            });
+        }
+    </script>
+}

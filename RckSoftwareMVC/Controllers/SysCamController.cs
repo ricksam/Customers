@@ -77,9 +77,9 @@ namespace RckSoftwareMVC.Controllers
 
 
 
-        public async void send_image(string image, string camera, string authenticate)
+        public  void send_image(string image, string camera, string authenticate)
         {
-            RckSoftwareMVC.Models.SysCam.DataImage data = new Models.SysCam.DataImage();
+            Models.SysCam.DataImage data = new Models.SysCam.DataImage();
             data.image = image;
             data.camera = camera;
             data.date = DateTime.Now.ToString("yyyy-MM-dd");
@@ -161,7 +161,7 @@ namespace RckSoftwareMVC.Controllers
 
         public ActionResult ExibeImagens(string data) {
             string key = Session["SysCam"].ToString();
-            string camera = Session["SysCam_CameraSelecionada"].ToString();
+            string camera = Session["SysCam_CameraSelecionada"]!=null? Session["SysCam_CameraSelecionada"].ToString():"";
 
             lib.Class.Encryption enc = new lib.Class.Encryption(key, "/9j4AQSkZJRgBEYD2wOxIPXFhHzMc8tLyUTldvWob3pm+naVfCG1K0iN6qe5r7us=" + '\n');
             RckSoftwareMVC.Models.SysCam.DataImage[] list = list_image(data, "100", "0", camera, "");
@@ -170,6 +170,11 @@ namespace RckSoftwareMVC.Controllers
                 item.image = enc.descrypt(item.image.Replace(" ", "+"));
             }
             return View(list);
+        }
+
+        public ActionResult DeletaImagem(string data) {
+            delete_image(data, Session["SysCam"].ToString());
+            return Content("ok");
         }
 
     }

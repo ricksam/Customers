@@ -1,0 +1,36 @@
+﻿@model IEnumerable<RckSoftwareMVC.SOCIAL_NETWORK>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>NAME</th>
+    <th>CLIENT_ID</th>
+    <th>CLIENT_SECRET</th>
+    <th>REDIRECT_URI</th>
+    <th>SCOPE</th>
+    <th></th>
+    <th></th>
+  </tr>
+  @foreach (var item in Model)
+  {
+    <tr>
+      <td>@item.ID</td>
+      <td>@item.NAME</td>
+      <td>@item.CLIENT_ID</td>
+      <td>@item.CLIENT_SECRET</td>
+      <td>@item.REDIRECT_URI</td>
+      <td>
+        <textarea rows="5" cols="40">@item.SCOPE</textarea>
+      </td>
+      <td><a href="/SNK/Editar/@(item.ID)">alterar</a></td>
+      <td><a href="/SNK/Remover/@(item.ID)">apagar</a></td>
+    </tr>
+  }
+</table>
+
+<a href="Editar/0">Novo</a>

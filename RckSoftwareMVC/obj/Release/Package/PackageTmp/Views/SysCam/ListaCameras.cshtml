@@ -3,10 +3,12 @@
     Layout = null;
 }
 
-<h3>Câmeras</h3>
-<ul class="list-group">
-    @foreach (var item in Model)
-    {
-        <li class="list-group-item list-group-item-action @(Session["SysCam_CameraSelecionada"] != null && Session["SysCam_CameraSelecionada"].ToString() == item?"active":"")">@(item)</li>
-    }
-</ul>
+<div class="form-group">
+    <label>Câmeras</label>
+    <ul class="list-group">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item list-group-item-action @(Session["SysCam_CameraSelecionada"] != null && Session["SysCam_CameraSelecionada"].ToString() == item?"active":"")">@(item)</li>
+        }
+    </ul>
+</div>

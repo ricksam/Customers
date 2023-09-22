@@ -1,0 +1,11 @@
+﻿@model RckSoftwareMVC.CTP_MRD_MORADOR
+@{
+    ViewBag.Title = "GravarSenha";
+}
+
+<form action="/CTP/GravarSenha" method="post">
+<h2>Gravar nova senha</h2>
+<input type="hidden" name="id" value="@(Model.MRD_CODIGO)"  />
+<input type="password" name="Senha" placeholder="Senha" />
+<button type="submit">Gravar</button>
+</form>
